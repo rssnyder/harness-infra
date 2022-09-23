@@ -24,17 +24,9 @@ pipeline:
                       type: Inline
                       spec:
                         script: |
-                          echo "delete local creds"
+                          echo "current role: $(aws sts get-caller-identity | jq -r .Arn)"
 
-                          rm -rf ~/.aws
-
-                          echo "current role: $(aws sts get-caller-identity | jq .Arn)"
-
-                          assume="$(aws sts assume-role --role-arn $ROLE_ARN --role-session-name '<+stage.name>-<+service.name>-<+pipeline.executionId>')"
-                          echo $assume | jq .
-
-                          unset AWS_ACCESS_KEY_ID
-                          unset AWS_SECRET_ACCESS_KEY
+                          assume="$(aws sts assume-role --role-arn $ROLE_ARN --role-session-name '<+stage.name>-<+pipeline.executionId>')"
 
                           export AWS_ACCESS_KEY_ID=$(echo $assume | jq -r .Credentials.AccessKeyId)
                           export AWS_SECRET_ACCESS_KEY=$(echo $assume | jq -r .Credentials.SecretAccessKey)
@@ -56,13 +48,13 @@ pipeline:
                         value: <+input>
                     outputVariables:
                       - name: AWS_ACCESS_KEY_ID
-                        type: String
+                        type: Secret
                         value: AWS_ACCESS_KEY_ID
                       - name: AWS_SECRET_ACCESS_KEY
-                        type: String
+                        type: Secret
                         value: AWS_SECRET_ACCESS_KEY
                       - name: AWS_SESSION_TOKEN
-                        type: String
+                        type: Secret
                         value: AWS_SESSION_TOKEN
                     delegateSelectors:
                       - riley-sa-cluser-development
