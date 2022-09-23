@@ -14,6 +14,54 @@ pipeline:
           execution:
             steps:
               - step:
+                  type: ShellScript
+                  name: assume
+                  identifier: assume
+                  spec:
+                    shell: Bash
+                    onDelegate: true
+                    source:
+                      type: Inline
+                      spec:
+                        script: |
+                          echo "delete local creds"
+
+                          rm -rf ~/.aws
+
+                          echo "current role: $(aws sts get-caller-identity | jq .Arn)"
+
+                          assume="$(aws sts assume-role --role-arn $ROLE_ARN --role-session-name '<+stage.name>-<+service.name>-<+pipeline.executionId>')"
+
+                          AWS_ACCESS_KEY_ID=$(echo $assume | jq .Credentials.AccessKeyId)
+                          AWS_SECRET_ACCESS_KEY=$(echo $assume | jq .Credentials.SecretAccessKey)
+                          AWS_SESSION_TOKEN=$(echo $assume | jq .Credentials.SessionToken)
+
+                          echo "assumed role: $(aws sts get-caller-identity | jq .Arn)"
+                    environmentVariables:
+                      - name: AWS_ACCESS_KEY_ID
+                        type: String
+                        value: <+secrets.getValue("aws_access_key_id")>
+                      - name: AWS_SECRET_ACCESS_KEY
+                        type: String
+                        value: <+secrets.getValue("aws_secret_access_key")>
+                      - name: AWS_DEFAULT_REGION
+                        type: String
+                        value: us-west-2
+                      - name: ROLE_ARN
+                        type: String
+                        value: <+input>
+                    outputVariables:
+                      - name: AWS_ACCESS_KEY_ID
+                        type: String
+                        value: AWS_ACCESS_KEY_ID
+                      - name: AWS_SECRET_ACCESS_KEY
+                        type: String
+                        value: AWS_SECRET_ACCESS_KEY
+                      - name: AWS_SESSION_TOKEN
+                        type: String
+                        value: AWS_SESSION_TOKEN
+                  timeout: 10m
+              - step:
                   type: TerraformPlan
                   name: plan
                   identifier: pla
@@ -35,16 +83,19 @@ pipeline:
                           value: us-west-2
                           type: String
                         - name: AWS_ACCESS_KEY_ID
-                          value: <+secrets.getValue("aws_access_key_id")>
+                          value: <+steps.assume.output.outputVariables.AWS_ACCESS_KEY_ID>
                           type: String
                         - name: AWS_SECRET_ACCESS_KEY
-                          value: <+secrets.getValue("aws_secret_access_key")>
+                          value: <+steps.assume.output.outputVariables.AWS_SECRET_ACCESS_KEY>
                           type: String
                         - name: HARNESS_PLATFORM_API_KEY
                           value: <+secrets.getValue("HARNESS_PLATFORM_API_KEY")>
                           type: String
                         - name: HARNESS_ACCOUNT_ID
                           value: wlgELJ0TTre5aZhzpt8gVA
+                          type: String
+                        - name: AWS_SESSION_TOKEN
+                          value: <+steps.assume.output.outputVariables.AWS_SESSION_TOKEN>
                           type: String
                     provisionerIdentifier: something
                     delegateSelectors:
