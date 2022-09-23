@@ -36,9 +36,9 @@ pipeline:
                           unset AWS_ACCESS_KEY_ID
                           unset AWS_SECRET_ACCESS_KEY
 
-                          AWS_ACCESS_KEY_ID=$(echo $assume | jq .Credentials.AccessKeyId)
-                          AWS_SECRET_ACCESS_KEY=$(echo $assume | jq .Credentials.SecretAccessKey)
-                          AWS_SESSION_TOKEN=$(echo $assume | jq .Credentials.SessionToken)
+                          AWS_ACCESS_KEY_ID=$(echo $assume | jq -r .Credentials.AccessKeyId)
+                          AWS_SECRET_ACCESS_KEY=$(echo $assume | jq -r .Credentials.SecretAccessKey)
+                          AWS_SESSION_TOKEN=$(echo $assume | jq -r .Credentials.SessionToken)
 
                           echo "assumed role: $(aws sts get-caller-identity | jq .Arn)"
                     environmentVariables:
