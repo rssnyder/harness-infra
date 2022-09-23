@@ -64,7 +64,10 @@ pipeline:
                       - name: AWS_SESSION_TOKEN
                         type: String
                         value: AWS_SESSION_TOKEN
+                    delegateSelectors:
+                      - riley-sa-cluser-development
                   timeout: 10m
+                  failureStrategies: []
               - step:
                   type: TerraformPlan
                   name: plan
@@ -128,6 +131,9 @@ pipeline:
                     configuration:
                       type: InheritFromPlan
                     provisionerIdentifier: something
+                    delegateSelectors:
+                      - riley-sa-cluser-development
                   timeout: 10m
+                  failureStrategies: []
         tags: {}
   storeType: INLINE
