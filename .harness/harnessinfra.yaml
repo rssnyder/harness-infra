@@ -87,10 +87,10 @@ pipeline:
                           value: us-west-2
                           type: String
                         - name: AWS_ACCESS_KEY_ID
-                          value: <+steps.assume.output.outputVariables.AWS_ACCESS_KEY_ID>
+                          value: <+execution.steps.assume.output.outputVariables.AWS_ACCESS_KEY_ID>
                           type: String
                         - name: AWS_SECRET_ACCESS_KEY
-                          value: <+steps.assume.output.outputVariables.AWS_SECRET_ACCESS_KEY>
+                          value: <+execution.steps.assume.output.outputVariables.AWS_SECRET_ACCESS_KEY>
                           type: String
                         - name: HARNESS_PLATFORM_API_KEY
                           value: <+secrets.getValue("HARNESS_PLATFORM_API_KEY")>
@@ -99,7 +99,7 @@ pipeline:
                           value: wlgELJ0TTre5aZhzpt8gVA
                           type: String
                         - name: AWS_SESSION_TOKEN
-                          value: <+steps.assume.output.outputVariables.AWS_SESSION_TOKEN>
+                          value: <+execution.steps.assume.output.outputVariables.AWS_SESSION_TOKEN>
                           type: String
                     provisionerIdentifier: something
                     delegateSelectors:
