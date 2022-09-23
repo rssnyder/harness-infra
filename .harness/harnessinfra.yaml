@@ -31,6 +31,7 @@ pipeline:
                           echo "current role: $(aws sts get-caller-identity | jq .Arn)"
 
                           assume="$(aws sts assume-role --role-arn $ROLE_ARN --role-session-name '<+stage.name>-<+service.name>-<+pipeline.executionId>')"
+                          echo $assume | jq .
 
                           AWS_ACCESS_KEY_ID=$(echo $assume | jq .Credentials.AccessKeyId)
                           AWS_SECRET_ACCESS_KEY=$(echo $assume | jq .Credentials.SecretAccessKey)
