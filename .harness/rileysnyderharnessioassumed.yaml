@@ -1,0 +1,31 @@
+inputSet:
+  identifier: "rileysnyderharnessioassumed"
+  pipeline:
+    identifier: "harnessinfra"
+    stages:
+    - stage:
+        identifier: "apply"
+        type: "Custom"
+        spec:
+          execution:
+            steps:
+            - step:
+                identifier: "assume"
+                template:
+                  templateInputs:
+                    type: "ShellScript"
+                    spec:
+                      environmentVariables:
+                      - name: "AWS_ACCESS_KEY_ID"
+                        type: "String"
+                        value: "<+secrets.getValue(\"account.aws_access_key_id\")>"
+                      - name: "AWS_SECRET_ACCESS_KEY"
+                        type: "String"
+                        value: "<+secrets.getValue(\"account.aws_secret_access_key\"\
+                          )>"
+                      - name: "TARGET_ROLE_ARN"
+                        type: "String"
+                        value: "arn:aws:iam::759984737373:role/rileysnyderharnessio-assumed"
+  name: "rileysnyderharnessio-assumed"
+  orgIdentifier: "default"
+  projectIdentifier: "development"
