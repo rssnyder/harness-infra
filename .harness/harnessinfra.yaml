@@ -17,7 +17,7 @@ pipeline:
                   name: assume
                   identifier: assume
                   template:
-                    templateRef: assume_role_w_key
+                    templateRef: account.aws_assume_role_w_key
                     versionLabel: "1"
                     templateInputs:
                       type: ShellScript
