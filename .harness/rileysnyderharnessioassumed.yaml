@@ -1,5 +1,8 @@
 inputSet:
   identifier: "rileysnyderharnessioassumed"
+  name: "rileysnyderharnessio-assumed"
+  orgIdentifier: "default"
+  projectIdentifier: "development"
   pipeline:
     identifier: "harnessinfra"
     stages:
@@ -21,11 +24,8 @@ inputSet:
                         value: "<+secrets.getValue(\"account.aws_access_key_id\")>"
                       - name: "AWS_SECRET_ACCESS_KEY"
                         type: "String"
-                        value: "<+secrets.getValue(\"account.aws_secret_access_key\"\
-                          )>"
+                        value: "<+secrets.getValue(\"account.aws_secret_access_key\")>"
                       - name: "TARGET_ROLE_ARN"
                         type: "String"
                         value: "arn:aws:iam::759984737373:role/rileysnyderharnessio-assumed"
-  name: "rileysnyderharnessio-assumed"
-  orgIdentifier: "default"
-  projectIdentifier: "development"
+
