@@ -67,10 +67,7 @@ pipeline:
                   name: approve
                   identifier: approve
                   spec:
-                    approvalMessage: |-
-                      Please review the plan step output and approve based on the changes specified.
-
-                      <+execution.steps.plan.plan.jsonFilePath>
+                    approvalMessage: Please review the plan step output and approve based on the changes specified. <+execution.steps.pla.plan.jsonFilePath>
                     includePipelineExecutionHistory: true
                     approvers:
                       userGroups:
