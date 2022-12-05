@@ -72,7 +72,7 @@ pipeline:
                     source:
                       type: Inline
                       spec:
-                        script: export PLAN=$(cat <+execution.steps.pla.plan.jsonFilePath>)
+                        script: export PLAN=$(cat "<+terraformPlanHumanReadable."pipeline.stages.tf.spec.execution.steps.tf.tf_planHumanReadable">")
                     environmentVariables: []
                     outputVariables:
                       - name: PLAN
