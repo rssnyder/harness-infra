@@ -57,6 +57,7 @@ pipeline:
                         - name: AWS_SESSION_TOKEN
                           value: <+execution.steps.assume.output.outputVariables.AWS_SESSION_TOKEN>
                           type: String
+                      exportTerraformPlanJson: true
                       exportTerraformHumanReadablePlan: true
                     provisionerIdentifier: harnessascode
                   timeout: 10m
@@ -66,7 +67,10 @@ pipeline:
                   name: approve
                   identifier: approve
                   spec:
-                    approvalMessage: Please review the plan step output and approve based on the changes specified.
+                    approvalMessage: |-
+                      Please review the plan step output and approve based on the changes specified.
+
+                      <+execution.steps.plan.plan.jsonFilePath>
                     includePipelineExecutionHistory: true
                     approvers:
                       userGroups:
