@@ -57,6 +57,7 @@ pipeline:
                         - name: AWS_SESSION_TOKEN
                           value: <+execution.steps.assume.output.outputVariables.AWS_SESSION_TOKEN>
                           type: String
+                      exportTerraformHumanReadablePlan: true
                     provisionerIdentifier: harnessascode
                   timeout: 10m
                   failureStrategies: []
