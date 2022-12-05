@@ -82,6 +82,13 @@ pipeline:
                           cat <+pipeline.stages.tf.spec.execution.steps.pla.humanReadableFilePath()>
                           echo "4"
                           cat <+pipeline.stages.tf.spec.execution.steps.pla.plan.humanReadableFilePath()>
+                          echo "5"
+                          cat <+pipeline.stages.tf.spec.execution.steps.pla.plan.humanReadableFilePath>
+                          echo "6"
+                          cat <+terraformPlanHumanReadable."pipeline.stages.tf.spec.execution.steps.pla.humanReadableFilePath">
+
+
+
                           echo "constant"
                           cat "<+execution.steps.pla.plan.jsonFilePath>"
                     environmentVariables: []
