@@ -63,6 +63,20 @@ pipeline:
                   timeout: 10m
                   failureStrategies: []
               - step:
+                  type: ShellScript
+                  name: output
+                  identifier: output
+                  spec:
+                    shell: Bash
+                    onDelegate: true
+                    source:
+                      type: Inline
+                      spec:
+                        script: cat <+execution.steps.pla.plan.jsonFilePath>
+                    environmentVariables: []
+                    outputVariables: []
+                  timeout: 10m
+              - step:
                   type: HarnessApproval
                   name: approve
                   identifier: approve
