@@ -72,16 +72,19 @@ pipeline:
                     source:
                       type: Inline
                       spec:
-                        script: cat <+execution.steps.pla.plan.jsonFilePath>
+                        script: export PLAN=$(cat <+execution.steps.pla.plan.jsonFilePath>)
                     environmentVariables: []
-                    outputVariables: []
+                    outputVariables:
+                      - name: PLAN
+                        type: String
+                        value: PLAN
                   timeout: 10m
               - step:
                   type: HarnessApproval
                   name: approve
                   identifier: approve
                   spec:
-                    approvalMessage: Please review the plan step output and approve based on the changes specified. <+execution.steps.pla.plan.jsonFilePath>
+                    approvalMessage: Please review the plan step output and approve based on the changes specified. <+execution.steps.output.output.outputVariables.PLAN>
                     includePipelineExecutionHistory: true
                     approvers:
                       userGroups:
