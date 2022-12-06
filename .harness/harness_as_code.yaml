@@ -72,7 +72,7 @@ pipeline:
                     source:
                       type: Inline
                       spec:
-                        script: |
+                        script: |-
                           # export PLAN=$(cat "<+terraformPlanHumanReadable."pipeline.stages.tf.spec.execution.steps.pla.plan.tf_planHumanReadable">")
                           echo "1"
                           cat "<+terraformPlanHumanReadable."pipeline.stages.tf.spec.execution.steps.pla..tf_planHumanReadable">"
@@ -86,7 +86,8 @@ pipeline:
                           cat <+pipeline.stages.tf.spec.execution.steps.pla.plan.humanReadableFilePath>
                           echo "6"
                           cat <+terraformPlanHumanReadable."pipeline.stages.tf.spec.execution.steps.pla.humanReadableFilePath">
-
+                          echo "7"
+                          echo "<+terraformPlanHumanReadable."pipeline.stages.tf.spec.execution.steps.pla.tf_planHumanReadable">"
 
 
                           echo "constant"
