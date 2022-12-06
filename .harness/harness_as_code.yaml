@@ -72,27 +72,7 @@ pipeline:
                     source:
                       type: Inline
                       spec:
-                        script: |-
-                          # export PLAN=$(cat "<+terraformPlanHumanReadable."pipeline.stages.tf.spec.execution.steps.pla.plan.tf_planHumanReadable">")
-                          echo "1"
-                          cat "<+terraformPlanHumanReadable."pipeline.stages.tf.spec.execution.steps.pla..tf_planHumanReadable">"
-                          echo "2"
-                          cat "<+terraformPlanHumanReadable."pipeline.stages.tf.spec.execution.steps.pla.plan.tf_planHumanReadable">"
-                          echo "3"
-                          cat <+pipeline.stages.tf.spec.execution.steps.pla.humanReadableFilePath()>
-                          echo "4"
-                          cat <+pipeline.stages.tf.spec.execution.steps.pla.plan.humanReadableFilePath()>
-                          echo "5"
-                          cat <+pipeline.stages.tf.spec.execution.steps.pla.plan.humanReadableFilePath>
-                          echo "6"
-                          cat <+terraformPlanHumanReadable."pipeline.stages.tf.spec.execution.steps.pla.humanReadableFilePath">
-                          echo "7"
-                          cat "<+terraformPlanHumanReadable."pipeline.stages.tf.spec.execution.steps.pla.tf_planHumanReadable">"
-                          echo "8"
-                          cat <+terraformPlanHumanReadable."pipeline.stages.apply.spec.execution.steps.pla.harnessascode_planHumanReadable">
-
-                          echo "constant"
-                          cat "<+execution.steps.pla.plan.jsonFilePath>"
+                        script: export PLAN=$(cat <+terraformPlanHumanReadable."pipeline.stages.apply.spec.execution.steps.pla.harnessascode_planHumanReadable">)
                     environmentVariables: []
                     outputVariables:
                       - name: PLAN
