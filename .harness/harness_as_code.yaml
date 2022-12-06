@@ -87,8 +87,9 @@ pipeline:
                           echo "6"
                           cat <+terraformPlanHumanReadable."pipeline.stages.tf.spec.execution.steps.pla.humanReadableFilePath">
                           echo "7"
-                          echo "<+terraformPlanHumanReadable."pipeline.stages.tf.spec.execution.steps.pla.tf_planHumanReadable">"
-
+                          cat "<+terraformPlanHumanReadable."pipeline.stages.tf.spec.execution.steps.pla.tf_planHumanReadable">"
+                          echo "8"
+                          cat <+terraformPlanHumanReadable."pipeline.stages.apply.spec.execution.steps.pla.harnessascode_planHumanReadable">
 
                           echo "constant"
                           cat "<+execution.steps.pla.plan.jsonFilePath>"
