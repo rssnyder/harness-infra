@@ -87,7 +87,7 @@ service:
             - spec:
                 connectorRef: account.dockerhub
                 imagePath: rileysnyderharnessio/delegate-immutable
-                tag: dev
+                tag: <+pipeline.variables.test_tag>
               identifier: delegate
               type: DockerRegistry
       variables:
