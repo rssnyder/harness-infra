@@ -32,7 +32,7 @@ pipeline:
                           spec:
                             gitFetchType: Branch
                             connectorRef: account.gitssh
-                            repoName: rssnyder/harness-infra
+                            repoName: harness-infra
                             branch: <+input>
                             folderPath: terraform/
                         moduleSource:
