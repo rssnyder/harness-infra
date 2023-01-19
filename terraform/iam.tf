@@ -12,8 +12,9 @@ data "aws_iam_policy_document" "rileysnyderharnessio-assumed" {
 }
 
 resource "aws_iam_role" "rileysnyderharnessio-assumed" {
-  name               = "rileysnyderharnessio-assumed"
-  assume_role_policy = data.aws_iam_policy_document.rileysnyderharnessio-assumed.json
+  name                 = "rileysnyderharnessio-assumed"
+  assume_role_policy   = data.aws_iam_policy_document.rileysnyderharnessio-assumed.json
+  max_session_duration = 28800
 }
 
 resource "aws_iam_role_policy_attachment" "rileysnyderharnessio-assumed-AdministratorAccess" {

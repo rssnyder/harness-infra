@@ -16,9 +16,71 @@ instances:
         owner: rileysnyderharnessio
         ttl: '-1'
       ami: ami-08df94af6199f15b6
-      size: t2.nano
+      size: t3.medium
       network:
         private_ip: true
         subnet_id: subnet-0974d4940eab1ea9d
         security_groups:
         - sg-0c417e4aaded7ba28
+      # user_data: |
+      #   echo "[USER] This is the user data from my pool config"
+  - name: windows
+    default: true
+    type: amazon
+    pool: 1
+    limit: 4
+    platform:
+      os: windows
+      arch: amd64
+    spec:
+      account:
+        region: us-west-2
+        availability_zone: us-west-2a
+      tags:
+        owner: rileysnyderharnessio
+        ttl: '-1'
+      hibernate: true
+      ami: ami-0437c3d8d31331cb5
+      size: t3.xlarge
+      network:
+        private_ip: true
+        subnet_id: subnet-0974d4940eab1ea9d
+        security_groups:
+        - sg-0c417e4aaded7ba28
+      # user_data: |
+      #   <powershell>
+      #   echo "[DRONE] Initialization Starting"
+      #   echo "[DRONE] Installing Scoop Package Manager"
+      #   iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
+      #   echo "[DRONE] Installing Git"
+      #   scoop install git --global
+      #   echo "[DRONE] Updating PATH so we have access to git commands (otherwise Scoop.sh shim files cannot be found)"
+      #   $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+      #   echo "[DRONE] Setup LiteEngine Certificates"
+      #   mkdir "C:\Program Files\lite-engine"
+      #   mkdir "{{ .CertDir }}"
+      #   $object0 = "{{ .CACert | base64 }}"
+      #   $Object = [System.Convert]::FromBase64String($object0)
+      #   [system.io.file]::WriteAllBytes("{{ .CaCertPath }}",$object)
+      #   $object1 = "{{ .TLSCert | base64 }}"
+      #   $Object = [System.Convert]::FromBase64String($object1)
+      #   [system.io.file]::WriteAllBytes("{{ .CertPath }}",$object)
+      #   $object2 = "{{ .TLSKey | base64 }}"
+      #   $Object = [System.Convert]::FromBase64String($object2)
+      #   [system.io.file]::WriteAllBytes("{{ .KeyPath }}",$object)
+      #   # create powershell profile
+      #   if (test-path($profile) -eq "false")
+      #   {
+      #     new-item -path $env:windir\System32\WindowsPowerShell\v1.0\profile.ps1 -itemtype file -force
+      #   }
+      #   [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 -bor [Net.SecurityProtocolType]::Tls11 -bor [Net.SecurityProtocolType]::Tls
+      #   # Refresh the PSEnviroment
+      #   refreshenv
+      #   fsutil file createnew "C:\Program Files\lite-engine\.env" 0
+      #   Invoke-WebRequest -Uri "{{ .LiteEnginePath }}/lite-engine-{{ .Platform.OS }}-{{ .Platform.Arch }}.exe" -OutFile "C:\Program Files\lite-engine\lite-engine.exe"
+      #   New-NetFirewallRule -DisplayName "ALLOW TCP PORT 9079" -Direction inbound -Profile Any -Action Allow -LocalPort 9079 -Protocol TCP
+      #   Start-Process -FilePath "C:\Program Files\lite-engine\lite-engine.exe" -ArgumentList "server --env-file=` + "`" + `"C:\Program Files\lite-engine\.env` + "`" + `"" -RedirectStandardOutput "C:\Program Files\lite-engine\log.out" -RedirectStandardError "C:\Program Files\lite-engine\log.err"
+      #   echo "[DRONE] Initialization Complete"
+
+      #   echo "[USER] This is the user data from my pool config"
+      #   </powershell>

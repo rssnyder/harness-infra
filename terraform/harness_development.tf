@@ -45,15 +45,15 @@ environment:
   description: ""
   tags: {}
   type: PreProduction
-  orgIdentifier: default
-  projectIdentifier: development
+  orgIdentifier: ${data.harness_platform_organization.default.id}
+  projectIdentifier: ${harness_platform_project.development.id}
   variables: []
 EOF
 }
 
 resource "harness_platform_infrastructure" "development_dev_sa" {
-  identifier      = "sa"
-  name            = "sa"
+  identifier      = harness_platform_connector_kubernetes.sagcp.id
+  name            = harness_platform_connector_kubernetes.sagcp.id
   org_id          = data.harness_platform_organization.default.id
   project_id      = harness_platform_project.development.id
   env_id          = harness_platform_environment.development_dev.id
@@ -61,18 +61,18 @@ resource "harness_platform_infrastructure" "development_dev_sa" {
   deployment_type = "Kubernetes"
   yaml            = <<EOF
 infrastructureDefinition:
-  name: sa
-  identifier: sa
+  name: ${harness_platform_connector_kubernetes.sagcp.id}
+  identifier: ${harness_platform_connector_kubernetes.sagcp.id}
   description: ""
   tags: {}
-  orgIdentifier: default
-  projectIdentifier: development
-  environmentRef: dev
+  orgIdentifier: ${data.harness_platform_organization.default.id}
+  projectIdentifier: ${harness_platform_project.development.id}
+  environmentRef: ${harness_platform_environment.dev.id}
   deploymentType: Kubernetes
   type: KubernetesDirect
   spec:
-    connectorRef: account.sagcp
-    namespace: riley-dev-<+service.name>
+    connectorRef: account.${harness_platform_connector_kubernetes.sagcp.id}
+    namespace: riley-${harness_platform_environment.development_dev.id}-<+service.name>
     releaseName: release-<+INFRA_KEY>
   allowSimultaneousDeployments: false
 EOF
@@ -91,8 +91,8 @@ environment:
   description: ""
   tags: {}
   type: PreProduction
-  orgIdentifier: default
-  projectIdentifier: development
+  orgIdentifier: ${data.harness_platform_organization.default.id}
+  projectIdentifier: ${harness_platform_project.development.id}
   variables: []
 EOF
 }
@@ -111,14 +111,14 @@ infrastructureDefinition:
   identifier: sa
   description: ""
   tags: {}
-  orgIdentifier: default
-  projectIdentifier: development
-  environmentRef: stage
+  orgIdentifier: ${data.harness_platform_organization.default.id}
+  projectIdentifier: ${harness_platform_project.development.id}
+  environmentRef: ${harness_platform_environment.development_stage.id}
   deploymentType: Kubernetes
   type: KubernetesDirect
   spec:
     connectorRef: account.sagcp
-    namespace: riley-stage-<+service.name>
+    namespace: riley-${harness_platform_environment.development_stage.id}-<+service.name>
     releaseName: release-<+INFRA_KEY>
   allowSimultaneousDeployments: false
 EOF

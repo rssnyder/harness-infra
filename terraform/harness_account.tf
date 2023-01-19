@@ -24,7 +24,7 @@ resource "harness_platform_connector_docker" "dockerhub" {
   url        = "https://index.docker.io/v2/"
 
   credentials {
-    username     = "rileysnyderharnessio"
+    username     = "rssnyder"
     password_ref = "account.dockerhub"
   }
 }
@@ -42,4 +42,48 @@ resource "harness_platform_connector_aws" "sales" {
       "ecs"
     ]
   }
+}
+
+resource "harness_platform_connector_kubernetes" "sagcp" {
+  identifier = "sagcp"
+  name       = "sagcp"
+
+  inherit_from_delegate {
+    delegate_selectors = ["sa-cluster"]
+  }
+}
+
+
+resource "harness_platform_triggers" "dailytest" {
+  identifier = "dailytest"
+  org_id     = "default"
+  project_id = "Default_Project_1662659562703"
+  name       = "newname"
+  target_id  = "dronegithubapp"
+  yaml       = <<-EOT
+trigger:
+  name: newname
+  identifier: dailytest
+  enabled: true
+  orgIdentifier: default
+  projectIdentifier: Default_Project_1662659562703
+  pipelineIdentifier: dronegithubapp
+  source:
+    type: Scheduled
+    spec:
+      type: Cron
+      spec:
+        expression: 0 2 * * *
+  inputYaml: |
+    pipeline:
+      identifier: dronegithubapp
+      properties:
+        ci:
+          codebase:
+            build:
+              type: branch
+              spec:
+                branch: main
+
+    EOT
 }
