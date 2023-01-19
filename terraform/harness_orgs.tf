@@ -1,5 +1,5 @@
 module "snyder" {
-  source = "github.com/harness-community/terraform-harness-modules/organizations"
+  source = "git@github.com:harness-community/terraform-harness-modules.git//organizations"
 
   name        = "snyder"
   description = "Harness Core Management Organization"
@@ -10,7 +10,7 @@ module "snyder" {
 }
 
 module "snyder-management" {
-  source = "github.com/harness-community/terraform-harness-modules/projects"
+  source = "git@github.com:harness-community/terraform-harness-modules.git//projects"
 
   name            = "management"
   organization_id = module.snyder.organization_details.id
@@ -23,7 +23,7 @@ module "snyder-management" {
 }
 
 module "williams" {
-  source = "github.com/harness-community/terraform-harness-modules/organizations"
+  source = "git@github.com:harness-community/terraform-harness-modules.git//organizations"
 
   name        = "williams"
   description = "Harness Core Management Organization"
@@ -34,7 +34,7 @@ module "williams" {
 }
 
 module "williams-management" {
-  source = "github.com/harness-community/terraform-harness-modules/projects"
+  source = "git@github.com:harness-community/terraform-harness-modules.git//projects"
 
   name            = "management"
   organization_id = module.williams.organization_details.id
