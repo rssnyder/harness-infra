@@ -32,16 +32,3 @@ module "williams" {
   }
   global_tags = var.global_tags
 }
-
-module "williams-management" {
-  source = "git@github.com:harness-community/terraform-harness-modules.git//projects"
-
-  name            = "management"
-  organization_id = module.williams.organization_details.id
-  color           = "#83A38C"
-  description     = "Project to support Harness Management Pipelines"
-  tags = {
-    role = "platform-management"
-  }
-  global_tags = var.global_tags
-}
