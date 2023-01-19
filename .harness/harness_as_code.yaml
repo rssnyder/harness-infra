@@ -20,6 +20,22 @@ pipeline:
                     templateRef: account.aws_assume_sales_admin
                     versionLabel: "1"
               - step:
+                  type: ShellScript
+                  name: clone deps
+                  identifier: clone_deps
+                  spec:
+                    shell: Bash
+                    onDelegate: true
+                    source:
+                      type: Inline
+                      spec:
+                        script: |-
+                          pwd
+                          git clone https://github.com/harness-community/terraform-harness-modules.git
+                    environmentVariables: []
+                    outputVariables: []
+                  timeout: 10m
+              - step:
                   type: TerraformPlan
                   name: plan
                   identifier: pla
