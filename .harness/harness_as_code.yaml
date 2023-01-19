@@ -84,5 +84,8 @@ pipeline:
                     provisionerIdentifier: harnessascode
                   timeout: 10m
                   failureStrategies: []
+                  when:
+                    stageStatus: Success
+                    condition: <+pipeline.stages.apply.spec.execution.steps.pla.spec.configuration.configFiles.store.spec.branch> == "main"
         tags: {}
   storeType: INLINE
