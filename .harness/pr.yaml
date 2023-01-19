@@ -1,0 +1,24 @@
+inputSet:
+  identifier: "pr"
+  name: "pr"
+  orgIdentifier: "default"
+  projectIdentifier: "Default_Project_1662659562703"
+  pipeline:
+    identifier: "harness_as_code"
+    stages:
+    - stage:
+        identifier: "apply"
+        type: "Custom"
+        spec:
+          execution:
+            steps:
+            - step:
+                identifier: "pla"
+                type: "TerraformPlan"
+                spec:
+                  configuration:
+                    configFiles:
+                      store:
+                        type: "Github"
+                        spec:
+                          branch: "<+trigger.branch>"
