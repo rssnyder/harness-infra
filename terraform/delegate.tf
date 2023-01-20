@@ -39,7 +39,7 @@ module "delegate" {
   # source                    = "../../terraform-aws-harness-delegate-ecs-fargate"
   name                      = "ecs"
   harness_account_id        = "wlgELJ0TTre5aZhzpt8gVA"
-  delegate_image            = "rssnyder/delegate:latest"
+  delegate_image            = "rssnyder/delegate:23.01.78101"
   delegate_token_secret_arn = "arn:aws:secretsmanager:us-west-2:759984737373:secret:riley/delegate-zBsttc"
   registry_secret_arn       = "arn:aws:secretsmanager:us-west-2:759984737373:secret:riley/dockerhub-UiTqT3"
   runner_config             = file("${path.module}/pool.yml")
