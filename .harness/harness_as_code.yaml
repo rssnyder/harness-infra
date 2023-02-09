@@ -74,6 +74,10 @@ pipeline:
                       disallowPipelineExecutor: false
                     approverInputs: []
                   timeout: 1d
+                  when:
+                    stageStatus: Success
+                    condition: <+pipeline.stages.apply.spec.execution.steps.pla.plan.detailedExitCode> != 0
+                  failureStrategies: []
               - step:
                   type: TerraformApply
                   name: apply
@@ -86,7 +90,7 @@ pipeline:
                   failureStrategies: []
                   when:
                     stageStatus: Success
-                    condition: <+pipeline.stages.apply.spec.execution.steps.pla.spec.configuration.configFiles.store.spec.branch> == "main"
+                    condition: (<+pipeline.stages.apply.spec.execution.steps.pla.spec.configuration.configFiles.store.spec.branch> == "main") && (<+pipeline.stages.apply.spec.execution.steps.pla.plan.detailedExitCode> != 0)
         tags: {}
   storeType: INLINE
   delegateSelectors:
