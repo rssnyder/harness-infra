@@ -20,6 +20,20 @@ pipeline:
                     templateRef: account.aws_assume_sales_admin
                     versionLabel: "1"
               - step:
+                  type: ShellScript
+                  name: Shell Script_1
+                  identifier: ShellScript_1
+                  spec:
+                    shell: Bash
+                    onDelegate: true
+                    source:
+                      type: Inline
+                      spec:
+                        script: whoami
+                    environmentVariables: []
+                    outputVariables: []
+                  timeout: 10m
+              - step:
                   type: TerraformPlan
                   name: plan
                   identifier: pla
