@@ -1,3 +1,7 @@
+# input sets
+
+## bundles == version manifests
+
 resource "harness_platform_input_set" "bundle0" {
   identifier  = "bundle0"
   name        = "bundle0"
@@ -14,12 +18,18 @@ inputSet:
   pipeline:
     identifier: aptos_demo
     variables:
-      - name: dst_version
+      - name: serviceA
         type: String
-        value: v3.10.1
-      - name: nginx_version
+        value: 1.23.3
+      - name: serviceB
         type: String
-        value: stable
+        value: 1.22.1
+      - name: serviceC
+        type: String
+        value: 1.20.0
+      - name: serviceD
+        type: String
+        value: 1.16.0
   EOT
 }
 
@@ -39,12 +49,18 @@ inputSet:
   pipeline:
     identifier: ${harness_platform_pipeline.aptos_demo.id}
     variables:
-      - name: dst_version
+      - name: serviceA
         type: String
-        value: v3.11.0-beta.1
-      - name: nginx_version
+        value: 1.23.3
+      - name: serviceB
         type: String
-        value: stable-alpine
+        value: 1.22.1
+      - name: serviceC
+        type: String
+        value: 1.20.0
+      - name: serviceD
+        type: String
+        value: 1.17.0
   EOT
 }
 
@@ -64,14 +80,22 @@ inputSet:
   pipeline:
     identifier: ${harness_platform_pipeline.aptos_demo.id}
     variables:
-      - name: dst_version
+      - name: serviceA
         type: String
-        value: v3.11.0-beta.2
-      - name: nginx_version
+        value: 1.23.0
+      - name: serviceB
         type: String
-        value: stable-alpine
+        value: 1.22.0
+      - name: serviceC
+        type: String
+        value: 1.20.1
+      - name: serviceD
+        type: String
+        value: 1.16.1
   EOT
 }
+
+## customer === set of services
 
 resource "harness_platform_input_set" "customerA" {
   identifier  = "customerA"
@@ -95,38 +119,42 @@ inputSet:
           spec:
             services:
               values:
-                - serviceRef: dst
+                - serviceRef: serviceA
                   serviceInputs:
                     serviceDefinition:
                       type: Kubernetes
                       spec:
-                        artifacts:
-                          primary:
-                            sources:
-                              - identifier: ghcr
-                                type: DockerRegistry
-                                spec:
-                                  tag: <+pipeline.variables.dst_version>
-                - serviceRef: nginx
-                  serviceInputs:
-                    serviceDefinition:
-                      type: Kubernetes
-                      spec:
-                        artifacts:
-                          primary:
-                            sources:
-                              - identifier: nginx
-                                type: DockerRegistry
-                                spec:
-                                  tag: <+pipeline.variables.nginx_version>
-                            primaryArtifactRef: ""
                         variables:
-                          - name: port
+                          - name: version
                             type: String
-                            value: "8080"
-                          - name: replicas
+                            value: "<+pipeline.variables.serviceA>"
+                - serviceRef: serviceB
+                  serviceInputs:
+                    serviceDefinition:
+                      type: Kubernetes
+                      spec:
+                        variables:
+                          - name: version
                             type: String
-                            value: "1"
+                            value: "<+pipeline.variables.serviceB>"
+                - serviceRef: serviceC
+                  serviceInputs:
+                    serviceDefinition:
+                      type: Kubernetes
+                      spec:
+                        variables:
+                          - name: version
+                            type: String
+                            value: "<+pipeline.variables.serviceC>"
+                - serviceRef: serviceD
+                  serviceInputs:
+                    serviceDefinition:
+                      type: Kubernetes
+                      spec:
+                        variables:
+                          - name: version
+                            type: String
+                            value: "<+pipeline.variables.serviceD>"
   EOT
 }
 
@@ -152,28 +180,81 @@ inputSet:
           spec:
             services:
               values:
-                - serviceRef: dst
+                - serviceRef: serviceA
                   serviceInputs:
                     serviceDefinition:
                       type: Kubernetes
                       spec:
-                        artifacts:
-                          primary:
-                            sources:
-                              - identifier: ghcr
-                                type: DockerRegistry
-                                spec:
-                                  tag: <+pipeline.variables.dst_version>
+                        variables:
+                          - name: version
+                            type: String
+                            value: "<+pipeline.variables.serviceA>"
   EOT
 }
+
+resource "harness_platform_input_set" "customerAslim" {
+  identifier  = "customerAslim"
+  name        = "customerAslim"
+  org_id      = data.harness_platform_organization.default.id
+  project_id  = harness_platform_project.development.id
+  pipeline_id = harness_platform_pipeline.aptos_demo.id
+  yaml        = <<-EOT
+inputSet:
+  name: customerAslim
+  tags: {}
+  identifier: customerAslim
+  orgIdentifier: ${data.harness_platform_organization.default.id}
+  projectIdentifier: ${harness_platform_project.development.id}
+  pipeline:
+    identifier: ${harness_platform_pipeline.aptos_demo.id}
+    stages:
+      - stage:
+          identifier: dev
+          type: Deployment
+          spec:
+            services:
+              values:
+                - serviceRef: serviceAslim
+                - serviceRef: serviceBslim
+                - serviceRef: serviceCslim
+                - serviceRef: serviceDslim
+  EOT
+}
+
+resource "harness_platform_input_set" "customerBslim" {
+  identifier  = "customerBslim"
+  name        = "customerBslim"
+  org_id      = data.harness_platform_organization.default.id
+  project_id  = harness_platform_project.development.id
+  pipeline_id = harness_platform_pipeline.aptos_demo.id
+  yaml        = <<-EOT
+inputSet:
+  name: customerBslim
+  tags: {}
+  identifier: customerBslim
+  orgIdentifier: ${data.harness_platform_organization.default.id}
+  projectIdentifier: ${harness_platform_project.development.id}
+  pipeline:
+    identifier: ${harness_platform_pipeline.aptos_demo.id}
+    stages:
+      - stage:
+          identifier: dev
+          type: Deployment
+          spec:
+            services:
+              values:
+                - serviceRef: serviceAslim
+  EOT
+}
+
+# pipeline
 
 resource "harness_platform_pipeline" "aptos_demo" {
   identifier = "aptos_demo"
   org_id     = data.harness_platform_organization.default.id
   project_id = harness_platform_project.development.id
   name       = "aptos_demo"
-
-  yaml = <<-EOT
+  yaml       = <<-EOT
 pipeline:
   name: aptos_demo
   identifier: aptos_demo
@@ -200,6 +281,12 @@ pipeline:
           execution:
             steps:
               - step:
+                  name: create
+                  identifier: create
+                  template:
+                    templateRef: account.create_namespace
+                    versionLabel: "1"
+              - step:
                   name: Rollout Deployment
                   identifier: rolloutDeployment
                   type: K8sRollingDeploy
@@ -207,6 +294,12 @@ pipeline:
                   spec:
                     skipDryRun: false
                     pruningEnabled: false
+              - step:
+                  name: delete
+                  identifier: delete
+                  template:
+                    templateRef: account.delete_namespace
+                    versionLabel: "1"
             rollbackSteps:
               - step:
                   name: Rollback Rollout Deployment
@@ -223,13 +316,495 @@ pipeline:
               action:
                 type: StageRollback
   variables:
-    - name: dst_version
+    - name: serviceA
       type: String
       description: ""
       value: <+input>
-    - name: nginx_version
+    - name: serviceB
+      type: String
+      description: ""
+      value: <+input>
+    - name: serviceC
+      type: String
+      description: ""
+      value: <+input>
+    - name: serviceD
       type: String
       description: ""
       value: <+input>
   EOT
+}
+
+# services
+
+resource "harness_platform_service" "serviceA" {
+  identifier = "serviceA"
+  name       = "serviceA"
+  org_id     = data.harness_platform_organization.default.id
+  project_id = harness_platform_project.development.id
+  yaml       = <<EOF
+service:
+  name: serviceA
+  identifier: serviceA
+  tags: {}
+  serviceDefinition:
+    type: Kubernetes
+    spec:
+      manifests:
+        - manifest:
+            identifier: template
+            type: K8sManifest
+            spec:
+              store:
+                type: Github
+                spec:
+                  connectorRef: account.Github
+                  gitFetchType: Branch
+                  paths:
+                    - deployment.yaml
+                  repoName: rssnyder/template
+                  branch: main
+              valuesPaths:
+                - values.yaml
+              skipResourceVersioning: false
+      artifacts:
+        primary:
+          primaryArtifactRef: nginx
+          sources:
+            - spec:
+                connectorRef: account.dockerhub
+                imagePath: library/nginx
+                tag: <+serviceVariables.version>
+              identifier: nginx
+              type: DockerRegistry
+      variables:
+        - name: port
+          type: String
+          description: ""
+          value: "80"
+          default: "80"
+        - name: replicas
+          type: String
+          description: ""
+          value: "1"
+          default: "1"
+        - name: version
+          type: String
+          description: ""
+          value: "<+input>"
+          default: "1.0.0"
+EOF
+}
+
+resource "harness_platform_service" "serviceB" {
+  identifier = "serviceB"
+  name       = "serviceB"
+  org_id     = data.harness_platform_organization.default.id
+  project_id = harness_platform_project.development.id
+  yaml       = <<EOF
+service:
+  name: serviceB
+  identifier: serviceB
+  tags: {}
+  serviceDefinition:
+    type: Kubernetes
+    spec:
+      manifests:
+        - manifest:
+            identifier: template
+            type: K8sManifest
+            spec:
+              store:
+                type: Github
+                spec:
+                  connectorRef: account.Github
+                  gitFetchType: Branch
+                  paths:
+                    - deployment.yaml
+                  repoName: rssnyder/template
+                  branch: main
+              valuesPaths:
+                - values.yaml
+              skipResourceVersioning: false
+      artifacts:
+        primary:
+          primaryArtifactRef: nginx
+          sources:
+            - spec:
+                connectorRef: account.dockerhub
+                imagePath: library/nginx
+                tag: <+serviceVariables.version>
+              identifier: nginx
+              type: DockerRegistry
+      variables:
+        - name: port
+          type: String
+          description: ""
+          value: "80"
+          default: "80"
+        - name: replicas
+          type: String
+          description: ""
+          value: "1"
+          default: "1"
+        - name: version
+          type: String
+          description: ""
+          value: "<+input>"
+          default: "1.0.0"
+EOF
+}
+
+resource "harness_platform_service" "serviceC" {
+  identifier = "serviceC"
+  name       = "serviceC"
+  org_id     = data.harness_platform_organization.default.id
+  project_id = harness_platform_project.development.id
+  yaml       = <<EOF
+service:
+  name: serviceC
+  identifier: serviceC
+  tags: {}
+  serviceDefinition:
+    type: Kubernetes
+    spec:
+      manifests:
+        - manifest:
+            identifier: template
+            type: K8sManifest
+            spec:
+              store:
+                type: Github
+                spec:
+                  connectorRef: account.Github
+                  gitFetchType: Branch
+                  paths:
+                    - deployment.yaml
+                  repoName: rssnyder/template
+                  branch: main
+              valuesPaths:
+                - values.yaml
+              skipResourceVersioning: false
+      artifacts:
+        primary:
+          primaryArtifactRef: nginx
+          sources:
+            - spec:
+                connectorRef: account.dockerhub
+                imagePath: library/nginx
+                tag: <+serviceVariables.version>
+              identifier: nginx
+              type: DockerRegistry
+      variables:
+        - name: port
+          type: String
+          description: ""
+          value: "80"
+          default: "80"
+        - name: replicas
+          type: String
+          description: ""
+          value: "1"
+          default: "1"
+        - name: version
+          type: String
+          description: ""
+          value: "<+input>"
+          default: "1.0.0"
+EOF
+}
+
+resource "harness_platform_service" "serviceD" {
+  identifier = "serviceD"
+  name       = "serviceD"
+  org_id     = data.harness_platform_organization.default.id
+  project_id = harness_platform_project.development.id
+  yaml       = <<EOF
+service:
+  name: serviceD
+  identifier: serviceD
+  tags: {}
+  serviceDefinition:
+    type: Kubernetes
+    spec:
+      manifests:
+        - manifest:
+            identifier: template
+            type: K8sManifest
+            spec:
+              store:
+                type: Github
+                spec:
+                  connectorRef: account.Github
+                  gitFetchType: Branch
+                  paths:
+                    - deployment.yaml
+                  repoName: rssnyder/template
+                  branch: main
+              valuesPaths:
+                - values.yaml
+              skipResourceVersioning: false
+      artifacts:
+        primary:
+          primaryArtifactRef: nginx
+          sources:
+            - spec:
+                connectorRef: account.dockerhub
+                imagePath: library/nginx
+                tag: <+serviceVariables.version>
+              identifier: nginx
+              type: DockerRegistry
+      variables:
+        - name: port
+          type: String
+          description: ""
+          value: "80"
+          default: "80"
+        - name: replicas
+          type: String
+          description: ""
+          value: "1"
+          default: "1"
+        - name: version
+          type: String
+          description: ""
+          value: "<+input>"
+          default: "1.0.0"
+EOF
+}
+
+resource "harness_platform_service" "serviceAslim" {
+  identifier = "serviceAslim"
+  name       = "serviceAslim"
+  org_id     = data.harness_platform_organization.default.id
+  project_id = harness_platform_project.development.id
+  yaml       = <<EOF
+service:
+  name: serviceAslim
+  identifier: serviceAslim
+  tags: {}
+  serviceDefinition:
+    type: Kubernetes
+    spec:
+      manifests:
+        - manifest:
+            identifier: template
+            type: K8sManifest
+            spec:
+              store:
+                type: Github
+                spec:
+                  connectorRef: account.Github
+                  gitFetchType: Branch
+                  paths:
+                    - deployment.yaml
+                  repoName: rssnyder/template
+                  branch: main
+              valuesPaths:
+                - values.yaml
+              skipResourceVersioning: false
+      artifacts:
+        primary:
+          primaryArtifactRef: nginx
+          sources:
+            - spec:
+                connectorRef: account.dockerhub
+                imagePath: library/nginx
+                tag: <+serviceVariables.version>
+              identifier: nginx
+              type: DockerRegistry
+      variables:
+        - name: port
+          type: String
+          description: ""
+          value: "80"
+          default: "80"
+        - name: replicas
+          type: String
+          description: ""
+          value: "1"
+          default: "1"
+        - name: version
+          type: String
+          description: ""
+          value: "<+pipeline.variables.serviceA>"
+          default: "1.0.0"
+EOF
+}
+
+resource "harness_platform_service" "serviceBslim" {
+  identifier = "serviceBslim"
+  name       = "serviceBslim"
+  org_id     = data.harness_platform_organization.default.id
+  project_id = harness_platform_project.development.id
+  yaml       = <<EOF
+service:
+  name: serviceBslim
+  identifier: serviceBslim
+  tags: {}
+  serviceDefinition:
+    type: Kubernetes
+    spec:
+      manifests:
+        - manifest:
+            identifier: template
+            type: K8sManifest
+            spec:
+              store:
+                type: Github
+                spec:
+                  connectorRef: account.Github
+                  gitFetchType: Branch
+                  paths:
+                    - deployment.yaml
+                  repoName: rssnyder/template
+                  branch: main
+              valuesPaths:
+                - values.yaml
+              skipResourceVersioning: false
+      artifacts:
+        primary:
+          primaryArtifactRef: nginx
+          sources:
+            - spec:
+                connectorRef: account.dockerhub
+                imagePath: library/nginx
+                tag: <+serviceVariables.version>
+              identifier: nginx
+              type: DockerRegistry
+      variables:
+        - name: port
+          type: String
+          description: ""
+          value: "80"
+          default: "80"
+        - name: replicas
+          type: String
+          description: ""
+          value: "1"
+          default: "1"
+        - name: version
+          type: String
+          description: ""
+          value: "<+pipeline.variables.serviceA>"
+          default: "1.0.0"
+EOF
+}
+
+resource "harness_platform_service" "serviceCslim" {
+  identifier = "serviceCslim"
+  name       = "serviceCslim"
+  org_id     = data.harness_platform_organization.default.id
+  project_id = harness_platform_project.development.id
+  yaml       = <<EOF
+service:
+  name: serviceCslim
+  identifier: serviceCslim
+  tags: {}
+  serviceDefinition:
+    type: Kubernetes
+    spec:
+      manifests:
+        - manifest:
+            identifier: template
+            type: K8sManifest
+            spec:
+              store:
+                type: Github
+                spec:
+                  connectorRef: account.Github
+                  gitFetchType: Branch
+                  paths:
+                    - deployment.yaml
+                  repoName: rssnyder/template
+                  branch: main
+              valuesPaths:
+                - values.yaml
+              skipResourceVersioning: false
+      artifacts:
+        primary:
+          primaryArtifactRef: nginx
+          sources:
+            - spec:
+                connectorRef: account.dockerhub
+                imagePath: library/nginx
+                tag: <+serviceVariables.version>
+              identifier: nginx
+              type: DockerRegistry
+      variables:
+        - name: port
+          type: String
+          description: ""
+          value: "80"
+          default: "80"
+        - name: replicas
+          type: String
+          description: ""
+          value: "1"
+          default: "1"
+        - name: version
+          type: String
+          description: ""
+          value: "<+pipeline.variables.serviceA>"
+          default: "1.0.0"
+EOF
+}
+
+resource "harness_platform_service" "serviceDslim" {
+  identifier = "serviceDslim"
+  name       = "serviceDslim"
+  org_id     = data.harness_platform_organization.default.id
+  project_id = harness_platform_project.development.id
+  yaml       = <<EOF
+service:
+  name: serviceDslim
+  identifier: serviceDslim
+  tags: {}
+  serviceDefinition:
+    type: Kubernetes
+    spec:
+      manifests:
+        - manifest:
+            identifier: template
+            type: K8sManifest
+            spec:
+              store:
+                type: Github
+                spec:
+                  connectorRef: account.Github
+                  gitFetchType: Branch
+                  paths:
+                    - deployment.yaml
+                  repoName: rssnyder/template
+                  branch: main
+              valuesPaths:
+                - values.yaml
+              skipResourceVersioning: false
+      artifacts:
+        primary:
+          primaryArtifactRef: nginx
+          sources:
+            - spec:
+                connectorRef: account.dockerhub
+                imagePath: library/nginx
+                tag: <+serviceVariables.version>
+              identifier: nginx
+              type: DockerRegistry
+      variables:
+        - name: port
+          type: String
+          description: ""
+          value: "80"
+          default: "80"
+        - name: replicas
+          type: String
+          description: ""
+          value: "1"
+          default: "1"
+        - name: version
+          type: String
+          description: ""
+          value: "<+pipeline.variables.serviceA>"
+          default: "1.0.0"
+EOF
 }

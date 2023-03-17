@@ -72,7 +72,7 @@ infrastructureDefinition:
   type: KubernetesDirect
   spec:
     connectorRef: account.${harness_platform_connector_kubernetes.sagcp.id}
-    namespace: riley-${harness_platform_environment.development_dev.id}-<+service.name>
+    namespace: riley-${harness_platform_environment.development_dev.id}-<+service.name.toLowerCase()>
     releaseName: release-<+INFRA_KEY>
   allowSimultaneousDeployments: false
 EOF
@@ -118,7 +118,7 @@ infrastructureDefinition:
   type: KubernetesDirect
   spec:
     connectorRef: account.sagcp
-    namespace: riley-${harness_platform_environment.development_stage.id}-<+service.name>
+    namespace: riley-${harness_platform_environment.development_stage.id}-<+service.name.toLowerCase()>
     releaseName: release-<+INFRA_KEY>
   allowSimultaneousDeployments: false
 EOF
