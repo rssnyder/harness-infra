@@ -79,7 +79,7 @@ pipeline:
                   timeout: 10s
                   when:
                     stageStatus: Success
-                    condition: <+trigger.event> == "pr"
+                    condition: <+trigger.event> == "PR"
                   failureStrategies: []
               - step:
                   type: HarnessApproval
