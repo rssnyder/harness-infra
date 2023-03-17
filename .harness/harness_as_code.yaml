@@ -61,6 +61,27 @@ pipeline:
                   timeout: 10m
                   failureStrategies: []
               - step:
+                  type: Http
+                  name: plan pr
+                  identifier: plan_pr
+                  spec:
+                    url: https://api.github.com/repos/rssnyder/harness-infra/issues/<+trigger.prNumber>/comments
+                    method: POST
+                    headers:
+                      - key: Accept
+                        value: application/vnd.github+json
+                      - key: Authorization
+                        value: Bearer <+secrets.getValue("account.gh_pat")>
+                      - key: X-GitHub-Api-Version
+                        value: "2022-11-28"
+                    outputVariables: []
+                    requestBody: "{\"body\":\"Terraform Plan Successful: <+pipeline.executionUrl>\"}"
+                  timeout: 10s
+                  when:
+                    stageStatus: Success
+                    condition: <+pipeline.triggerType> == "pr
+                  failureStrategies: []
+              - step:
                   type: HarnessApproval
                   name: approve
                   identifier: approve
