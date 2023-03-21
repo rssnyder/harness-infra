@@ -1,3 +1,8 @@
+data "harness_platform_organization" "default" {
+  identifier = "default"
+  name       = "default"
+}
+
 data "harness_platform_project" "default" {
   identifier = "Default_Project_1662659562703"
   name       = "Default Project"
