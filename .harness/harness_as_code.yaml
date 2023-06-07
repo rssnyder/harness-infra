@@ -63,9 +63,10 @@ pipeline:
                             identifier: inputs
                             type: Inline
                       secretManagerRef: harnessSecretManager
+                      exportTerraformPlanJson: true
+                      skipRefreshCommand: false
                     provisionerIdentifier: harnessascode
                   timeout: 10m
-                  failureStrategies: []
               - step:
                   type: Http
                   name: plan pr
