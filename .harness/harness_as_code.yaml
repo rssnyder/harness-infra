@@ -75,6 +75,7 @@ pipeline:
                             identifier: inputs
                             type: Inline
                       secretManagerRef: harnessSecretManager
+                      exportTerraformHumanReadablePlan: true
                       skipRefreshCommand: false
                     provisionerIdentifier: harnessascode
                   timeout: 10m
