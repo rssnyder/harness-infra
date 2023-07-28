@@ -34,7 +34,7 @@ pipeline:
                             connectorRef: account.gitssh
                             repoName: harness-infra
                             branch: <+input>
-                            folderPath: terraform/
+                            folderPath: foobar/
                         moduleSource:
                           useConnectorCredentials: true
                       environmentVariables:
