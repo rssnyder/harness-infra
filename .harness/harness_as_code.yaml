@@ -80,6 +80,23 @@ pipeline:
                     provisionerIdentifier: harnessascode
                   timeout: 10m
               - step:
+                  type: ShellScript
+                  name: get plan
+                  identifier: get_plan
+                  spec:
+                    shell: Bash
+                    onDelegate: true
+                    source:
+                      type: Inline
+                      spec:
+                        script: export PLAN=$(cat <+pipeline.stages.apply.spec.execution.steps.pla.plan.humanReadableFilePath>)
+                    environmentVariables: []
+                    outputVariables:
+                      - name: PLAN
+                        type: String
+                        value: PLAN
+                  timeout: 10m
+              - step:
                   type: Http
                   name: plan pr
                   identifier: plan_pr
