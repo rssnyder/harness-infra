@@ -111,12 +111,12 @@ pipeline:
                       - key: X-GitHub-Api-Version
                         value: "2022-11-28"
                     outputVariables: []
-                    requestBody: "{\"body\":\"Terraform Plan Successful: <+pipeline.executionUrl>\"}"
+                    requestBody: "{\"body\":\"```\\n<+pipeline.stages.apply.spec.execution.steps.get_plan.output.outputVariables.PLAN>\\n```\"}"
+                    inputVariables: []
                   timeout: 10s
                   when:
                     stageStatus: Success
                     condition: <+trigger.event> == "PR"
-                  failureStrategies: []
               - step:
                   type: HarnessApproval
                   name: approve
