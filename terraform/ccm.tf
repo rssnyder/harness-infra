@@ -1,6 +1,6 @@
 module "ccm" {
   source  = "harness-community/harness-ccm/aws"
-  version = "0.1.1-beta.1"
+  version = "0.1.1"
 
   # source = "../../terraform-aws-harness-ccm"
 
