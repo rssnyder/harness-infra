@@ -1,5 +1,5 @@
 resource "harness_platform_service" "nginx" {
-  count      = 4
+  count      = 5
   identifier = "nginx_${count.index}"
   name       = "nginx_${count.index}"
   org_id     = data.harness_platform_organization.default.id
