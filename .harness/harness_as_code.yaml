@@ -6,6 +6,13 @@ pipeline:
   tags: {}
   stages:
     - stage:
+        name: aws creds
+        identifier: aws_creds
+        template:
+          templateRef: account.generate_and_save_aws_keys
+          versionLabel: "1"
+          gitBranch: main
+    - stage:
         name: tf
         identifier: tf
         description: ""
