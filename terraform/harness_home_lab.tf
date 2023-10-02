@@ -32,6 +32,8 @@ resource "harness_platform_service" "harness_ccm_k8s_auto" {
 service:
   name: harness ccm k8s auto
   identifier: harness_ccm_k8s_auto
+  orgIdentifier: ${data.harness_platform_organization.default.id}
+  projectIdentifier: ${harness_platform_project.home_lab.id}
   serviceDefinition:
     type: Kubernetes
     spec:
@@ -77,8 +79,8 @@ resource "harness_platform_service" "ff_relay_proxy" {
 service:
   name: ff relay proxy
   identifier: ff_relay_proxy
-  orgIdentifier: default
-  projectIdentifier: home_lab
+  orgIdentifier: ${data.harness_platform_organization.default.id}
+  projectIdentifier: ${harness_platform_project.home_lab.id}
   serviceDefinition:
     spec:
       manifests:
@@ -121,6 +123,52 @@ service:
           description: ""
           required: true
           value: "2"
+    type: Kubernetes
+EOF
+}
+
+resource "harness_platform_service" "gitness" {
+  identifier = "gitness"
+  name       = "gitness"
+  org_id     = data.harness_platform_organization.default.id
+  project_id = harness_platform_project.home_lab.id
+  yaml       = <<EOF
+service:
+  name: gitness
+  identifier: gitness
+  orgIdentifier: ${data.harness_platform_organization.default.id}
+  projectIdentifier: ${harness_platform_project.home_lab.id}
+  serviceDefinition:
+    spec:
+      manifests:
+        - manifest:
+            identifier: main
+            type: K8sManifest
+            spec:
+              store:
+                type: Github
+                spec:
+                  connectorRef: account.rssnyder
+                  gitFetchType: Branch
+                  paths:
+                    - infra/k8s/gitness.yaml
+                  repoName: isengard
+                  branch: master
+              skipResourceVersioning: false
+              enableDeclarativeRollback: false
+              valuesPaths:
+                - infra/k8s/gitness-values.yaml
+      artifacts:
+        primary:
+          primaryArtifactRef: <+input>
+          sources:
+            - spec:
+                connectorRef: account.dockerhub
+                imagePath: harness/gitness
+                tag: <+input>
+                digest: ""
+              identifier: main
+              type: DockerRegistry
     type: Kubernetes
 EOF
 }

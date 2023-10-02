@@ -129,7 +129,7 @@ infrastructureDefinition:
   type: KubernetesDirect
   spec:
     connectorRef: account._lab
-    namespace: <+<+serviceVariables.namespace> != "null" ? <+serviceVariables.namespace> : <+service.name.toLowerCase().replace("_", "-").replace(" ", "-")>>
+    namespace: <+ <+empty(serviceVariables.namespace)> ? <+service.name.toLowerCase().replace("_", "-").replace(" ", "-")> : <+serviceVariables.namespace> >
     releaseName: release-<+INFRA_KEY>
   allowSimultaneousDeployments: false
 EOF
