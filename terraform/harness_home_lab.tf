@@ -123,6 +123,11 @@ service:
           description: ""
           required: true
           value: "2"
+        - name: serviceType
+          type: String
+          description: ""
+          required: false
+          value: LoadBalancer
     type: Kubernetes
 EOF
 }
