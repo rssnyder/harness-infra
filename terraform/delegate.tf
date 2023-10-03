@@ -123,6 +123,18 @@ module "delegate" {
   subnets = data.aws_subnets.sa-lab-private.ids
 }
 
+resource "harness_autostopping_rule_ecs" "ecs_work_hours" {
+  name               = "ecs work hours"
+  cloud_connector_id = harness_platform_connector_awscc.rileyharnessccm.id
+  idle_time_mins     = 30
+  container {
+    cluster    = data.aws_ecs_cluster.solutions-architecture.cluster_name
+    service    = reverse(split("/", module.delegate.aws_ecs_service))[0]
+    region     = data.aws_region.current.name
+    task_count = 1
+  }
+}
+
 # module "delegate-fallback" {
 #   source = "git::https://github.com/rssnyder/terraform-aws-harness-delegate-ecs-fargate.git?ref=0.0.4"
 #   #   source                    = "../../terraform-aws-harness-delegate-ecs-fargate"
