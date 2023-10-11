@@ -94,19 +94,30 @@ service:
                   connectorRef: account.global
                   gitFetchType: Branch
                   paths:
-                    - deploy/ff-relay-proxy.yaml
+                    - kubernetes/feature-flag-relay-proxy.yaml
                   repoName: harness-community/feature-flag-relay-proxy
                   branch: main
-              valuesPaths:
-                - deploy/values.yaml
               skipResourceVersioning: false
               enableDeclarativeRollback: false
+        - manifest:
+            identifier: values
+            type: Values
+            spec:
+              store:
+                type: Github
+                spec:
+                  connectorRef: account.rssnyder
+                  gitFetchType: Branch
+                  paths:
+                    - infra/k8s/ff-relay-proxy-values.yaml
+                  repoName: isengard
+                  branch: master
       artifacts:
         primary:
           primaryArtifactRef: <+input>
           sources:
             - spec:
-                connectorRef: account.${harness_platform_connector_docker.dockerhub.id}
+                connectorRef: account.dockerhub
                 imagePath: harness/ff-proxy
                 tag: <+input>
                 digest: ""
@@ -129,6 +140,7 @@ service:
           required: false
           value: LoadBalancer
     type: Kubernetes
+
 EOF
 }
 

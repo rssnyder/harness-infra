@@ -1,6 +1,6 @@
 module "ccm" {
   source  = "harness-community/harness-ccm/aws"
-  version = "0.1.1"
+  version = "0.1.2"
 
   # source = "../../terraform-aws-harness-ccm"
 
@@ -25,13 +25,29 @@ module "ccm" {
   ]
 }
 
+module "ccmtest" {
+  source  = "harness-community/harness-ccm/aws"
+  version = "0.1.2"
+
+  # source = "../../terraform-aws-harness-ccm"
+
+  external_id         = "harness:891928451355:wlgELJ0TTre5aZhzpt8gVA"
+  enable_events       = true
+  enable_optimization = true
+  enable_governance   = true
+  governance_policy_arns = [
+    aws_iam_policy.delegate_aws_access.arn
+  ]
+  prefix = "rileyccmtestmodule-"
+}
+
 resource "harness_platform_connector_awscc" "rileyharnessccm" {
   identifier = "rileyharnessccm"
   name       = "riley-harness-ccm"
 
   account_id  = "759984737373"
-  report_name = "riley-harness-ccm"
-  s3_bucket   = "riley-harness-ccm"
+  report_name = "solutions-architecture"
+  s3_bucket   = "harness-solutions-architecture"
   features_enabled = [
     "OPTIMIZATION",
     "VISIBILITY",
