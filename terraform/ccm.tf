@@ -52,6 +52,7 @@ resource "harness_platform_connector_awscc" "rileyharnessccm" {
     "OPTIMIZATION",
     "VISIBILITY",
     "BILLING",
+    "GOVERNANCE"
   ]
   cross_account_access {
     role_arn    = module.ccm.cross_account_role

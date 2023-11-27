@@ -32,3 +32,5 @@ provider "aws" {
 provider "azurerm" {
   features {}
 }
+
+provider "harness" {}

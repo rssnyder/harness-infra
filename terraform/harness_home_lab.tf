@@ -70,79 +70,79 @@ service:
 EOF
 }
 
-resource "harness_platform_service" "ff_relay_proxy" {
-  identifier = "ff_relay_proxy"
-  name       = "ff relay proxy"
-  org_id     = data.harness_platform_organization.default.id
-  project_id = harness_platform_project.home_lab.id
-  yaml       = <<EOF
-service:
-  name: ff relay proxy
-  identifier: ff_relay_proxy
-  orgIdentifier: ${data.harness_platform_organization.default.id}
-  projectIdentifier: ${harness_platform_project.home_lab.id}
-  serviceDefinition:
-    spec:
-      manifests:
-        - manifest:
-            identifier: main
-            type: K8sManifest
-            spec:
-              store:
-                type: Github
-                spec:
-                  connectorRef: account.global
-                  gitFetchType: Branch
-                  paths:
-                    - kubernetes/feature-flag-relay-proxy.yaml
-                  repoName: harness-community/feature-flag-relay-proxy
-                  branch: main
-              skipResourceVersioning: false
-              enableDeclarativeRollback: false
-        - manifest:
-            identifier: values
-            type: Values
-            spec:
-              store:
-                type: Github
-                spec:
-                  connectorRef: account.rssnyder
-                  gitFetchType: Branch
-                  paths:
-                    - infra/k8s/ff-relay-proxy-values.yaml
-                  repoName: isengard
-                  branch: master
-      artifacts:
-        primary:
-          primaryArtifactRef: <+input>
-          sources:
-            - spec:
-                connectorRef: account.dockerhub
-                imagePath: harness/ff-proxy
-                tag: <+input>
-                digest: ""
-              identifier: main
-              type: DockerRegistry
-      variables:
-        - name: port
-          type: String
-          description: ""
-          required: true
-          value: "7000"
-        - name: replicas
-          type: String
-          description: ""
-          required: true
-          value: "2"
-        - name: serviceType
-          type: String
-          description: ""
-          required: false
-          value: LoadBalancer
-    type: Kubernetes
+# resource "harness_platform_service" "ff_relay_proxy" {
+#   identifier = "ff_relay_proxy"
+#   name       = "ff relay proxy"
+#   org_id     = data.harness_platform_organization.default.id
+#   project_id = harness_platform_project.home_lab.id
+#   yaml       = <<EOF
+# service:
+#   name: ff relay proxy
+#   identifier: ff_relay_proxy
+#   orgIdentifier: ${data.harness_platform_organization.default.id}
+#   projectIdentifier: ${harness_platform_project.home_lab.id}
+#   serviceDefinition:
+#     spec:
+#       manifests:
+#         - manifest:
+#             identifier: main
+#             type: K8sManifest
+#             spec:
+#               store:
+#                 type: Github
+#                 spec:
+#                   connectorRef: account.global
+#                   gitFetchType: Branch
+#                   paths:
+#                     - kubernetes/feature-flag-relay-proxy.yaml
+#                   repoName: harness-community/feature-flag-relay-proxy
+#                   branch: main
+#               skipResourceVersioning: false
+#               enableDeclarativeRollback: false
+#         - manifest:
+#             identifier: values
+#             type: Values
+#             spec:
+#               store:
+#                 type: Github
+#                 spec:
+#                   connectorRef: account.rssnyder
+#                   gitFetchType: Branch
+#                   paths:
+#                     - infra/k8s/ff-relay-proxy-values.yaml
+#                   repoName: isengard
+#                   branch: master
+#       artifacts:
+#         primary:
+#           primaryArtifactRef: <+input>
+#           sources:
+#             - spec:
+#                 connectorRef: account.dockerhub
+#                 imagePath: harness/ff-proxy
+#                 tag: <+input>
+#                 digest: ""
+#               identifier: main
+#               type: DockerRegistry
+#       variables:
+#         - name: port
+#           type: String
+#           description: ""
+#           required: true
+#           value: "7000"
+#         - name: replicas
+#           type: String
+#           description: ""
+#           required: true
+#           value: "2"
+#         - name: serviceType
+#           type: String
+#           description: ""
+#           required: false
+#           value: LoadBalancer
+#     type: Kubernetes
 
-EOF
-}
+# EOF
+# }
 
 resource "harness_platform_service" "gitness" {
   identifier = "gitness"
