@@ -135,7 +135,9 @@ resource "azurerm_container_group" "delegate" {
   }
 
   identity {
-    type         = "UserAssigned"
-    identity_ids = "78ff246f-45e4-4f96-95e8-6f8549435b26"
+    type = "UserAssigned"
+    identity_ids = [
+      "78ff246f-45e4-4f96-95e8-6f8549435b26"
+    ]
   }
 }
