@@ -133,4 +133,9 @@ resource "azurerm_container_group" "delegate" {
       DELEGATE_TOKEN = var.delegate_token
     }
   }
+
+  identity {
+    type         = "UserAssigned"
+    identity_ids = "78ff246f-45e4-4f96-95e8-6f8549435b26"
+  }
 }
