@@ -106,3 +106,31 @@ resource "azurerm_key_vault" "rileysnyderharnessio" {
   enable_rbac_authorization   = true
   sku_name                    = "standard"
 }
+
+resource "azurerm_container_group" "delegate" {
+  name                = "harness-delegate-ng"
+  location            = data.azurerm_resource_group.rileysnyderharnessio.location
+  resource_group_name = data.azurerm_resource_group.rileysnyderharnessio.name
+  ip_address_type     = "None"
+  os_type             = "Linux"
+
+  container {
+    name   = "delegate"
+    image  = "harness/delegate:23.12.81808"
+    cpu    = "1"
+    memory = "2"
+
+    environment_variables = {
+      DELEGATE_NAME             = "aci"
+      NEXT_GEN                  = "true"
+      DELEGATE_TYPE             = "DOCKER"
+      ACCOUNT_ID                = data.harness_current_account.current.id
+      LOG_STREAMING_SERVICE_URL = "https://app.harness.io/gratis/log-service/" # change based on your account
+      MANAGER_HOST_AND_PORT     = "https://app.harness.io/gratis"              # change based on your account
+    }
+
+    secure_environment_variables = {
+      DELEGATE_TOKEN = var.delegate_token
+    }
+  }
+}
