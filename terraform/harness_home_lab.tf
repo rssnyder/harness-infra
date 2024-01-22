@@ -190,66 +190,66 @@ service:
 EOF
 }
 
-resource "harness_platform_gitops_applications" "home_lab" {
-  for_each = toset([
-    "send",
-    "reddit-alerts",
-    "whoami",
-    "ollama",
-    "mosquitto",
-    "keys",
-    "hp-movie-picker",
-    "discord-bot-manager",
-    "discord-bot",
-    "counter-api"
-  ])
-  account_id = data.harness_current_account.current.id
-  org_id     = data.harness_platform_organization.default.id
-  project_id = harness_platform_project.home_lab.id
+# resource "harness_platform_gitops_applications" "home_lab" {
+#   for_each = toset([
+#     "send",
+#     "reddit-alerts",
+#     "whoami",
+#     "ollama",
+#     "mosquitto",
+#     "keys",
+#     "hp-movie-picker",
+#     "discord-bot-manager",
+#     "discord-bot",
+#     "counter-api"
+#   ])
+#   account_id = data.harness_current_account.current.id
+#   org_id     = data.harness_platform_organization.default.id
+#   project_id = harness_platform_project.home_lab.id
 
-  name       = each.key
-  identifier = each.key
-  cluster_id = "lab"
-  repo_id    = "isengard"
-  agent_id   = "lab"
+#   name       = each.key
+#   identifier = each.key
+#   cluster_id = "lab"
+#   repo_id    = "isengard"
+#   agent_id   = "lab"
 
-  application {
-    metadata {
-      annotations = {}
-      labels = {
-        "harness.io/envRef" = "account.local"
-      }
-      name = each.key
-    }
-    spec {
-      sync_policy {
-        sync_options = [
-          "PrunePropagationPolicy=foreground",
-          "CreateNamespace=true",
-          "Validate=true",
-          "PruneLast=true",
-          "ApplyOutOfSyncOnly=false",
-          "FluxSubsystem=false",
-          "AutoCreateFluxResources=false",
-          "retry=false",
-          "Replace=false"
-        ]
-        # automated {
-        #   allow_empty = false
-        #   prune       = true
-        #   self_heal   = false
-        # }
-      }
-      source {
-        target_revision = "master"
-        repo_url        = "https://github.com/rssnyder/isengard"
-        path            = "infra/k8s/${each.key}"
+#   application {
+#     metadata {
+#       annotations = {}
+#       labels = {
+#         "harness.io/envRef" = "account.local"
+#       }
+#       name = each.key
+#     }
+#     spec {
+#       sync_policy {
+#         sync_options = [
+#           "PrunePropagationPolicy=foreground",
+#           "CreateNamespace=true",
+#           "Validate=true",
+#           "PruneLast=true",
+#           "ApplyOutOfSyncOnly=false",
+#           "FluxSubsystem=false",
+#           "AutoCreateFluxResources=false",
+#           "retry=false",
+#           "Replace=false"
+#         ]
+#         # automated {
+#         #   allow_empty = false
+#         #   prune       = true
+#         #   self_heal   = false
+#         # }
+#       }
+#       source {
+#         target_revision = "master"
+#         repo_url        = "https://github.com/rssnyder/isengard"
+#         path            = "infra/k8s/${each.key}"
 
-      }
-      destination {
-        namespace = each.key
-        server    = "https://kubernetes.default.svc"
-      }
-    }
-  }
-}
+#       }
+#       destination {
+#         namespace = each.key
+#         server    = "https://kubernetes.default.svc"
+#       }
+#     }
+#   }
+# }

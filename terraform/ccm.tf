@@ -15,6 +15,12 @@ module "ccm" {
   enable_governance       = true
   enable_commitment_read  = true
   enable_commitment_write = true
+
+  # enable_cmk_ebs                     = true
+  # enable_autostopping_elb            = true
+  # enable_autostopping_ec2            = true
+  # enable_autostopping_asg_rds_lambda = true
+
   governance_policy_arns = [
     aws_iam_policy.delegate_aws_access.arn
   ]
