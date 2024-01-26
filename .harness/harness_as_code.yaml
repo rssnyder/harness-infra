@@ -52,7 +52,7 @@ pipeline:
                         connectorRef: account.harnessImage
                         image: bridgecrew/checkov
                         shell: Sh
-                        command: checkov -f <+pipeline.stages.tf.spec.execution.steps.plan.output.outputVariables.plan>
+                        command: checkov -f <+execution.steps.plan.output.outputVariables.plan>
                   - step:
                       type: Run
                       name: tfsec
