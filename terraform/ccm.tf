@@ -31,21 +31,21 @@ module "ccm" {
   ]
 }
 
-module "ccmtest" {
-  source  = "harness-community/harness-ccm/aws"
-  version = "0.1.2"
+# module "ccmtest" {
+#   source  = "harness-community/harness-ccm/aws"
+#   version = "0.1.5-beta.1"
 
-  # source = "../../terraform-aws-harness-ccm"
+#   # source = "../../terraform-aws-harness-ccm"
 
-  external_id         = "harness:891928451355:wlgELJ0TTre5aZhzpt8gVA"
-  enable_events       = true
-  enable_optimization = true
-  enable_governance   = true
-  governance_policy_arns = [
-    aws_iam_policy.delegate_aws_access.arn
-  ]
-  prefix = "rileyccmtestmodule-"
-}
+#   external_id         = "harness:891928451355:wlgELJ0TTre5aZhzpt8gVA"
+#   enable_events       = true
+#   enable_optimization = true
+#   enable_governance   = true
+#   governance_policy_arns = [
+#     aws_iam_policy.delegate_aws_access.arn
+#   ]
+#   prefix = "rileyccmtestmodule-"
+# }
 
 resource "harness_platform_connector_awscc" "rileyharnessccm" {
   identifier = "rileyharnessccm"

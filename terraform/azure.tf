@@ -69,12 +69,15 @@ resource "azurerm_virtual_network" "rileysnyderharnessio" {
   location            = "centralus"
   resource_group_name = data.azurerm_resource_group.rileysnyderharnessio.name
   address_space       = ["10.0.0.0/16"]
-  #   dns_servers         = ["10.0.0.4", "10.0.0.5"]
 
   subnet {
     name           = "default"
     address_prefix = "10.0.0.0/24"
-    # security_group = azurerm_network_security_group.web-nsg.id
+  }
+
+  subnet {
+    name           = "appgw"
+    address_prefix = "10.0.254.0/24"
   }
 
   tags = {
@@ -133,11 +136,136 @@ resource "azurerm_container_group" "delegate" {
       DELEGATE_TOKEN = var.delegate_token
     }
   }
+}
 
-  # identity {
-  #   type = "UserAssigned"
-  #   identity_ids = [
-  #     "78ff246f-45e4-4f96-95e8-6f8549435b26"
-  #   ]
-  # }
+resource "azurerm_network_interface" "web" {
+  name                = "web-nic"
+  location            = "centralus"
+  resource_group_name = data.azurerm_resource_group.rileysnyderharnessio.name
+
+  ip_configuration {
+    name                          = "config1"
+    subnet_id                     = azurerm_virtual_network.rileysnyderharnessio.subnet.*.id[0]
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+resource "azurerm_virtual_machine" "web" {
+  name                = "web"
+  location            = "centralus"
+  resource_group_name = data.azurerm_resource_group.rileysnyderharnessio.name
+  network_interface_ids = [
+    azurerm_network_interface.web.id
+  ]
+  vm_size = "Standard_A1_v2"
+
+  delete_os_disk_on_termination    = true
+  delete_data_disks_on_termination = true
+
+  storage_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts"
+    version   = "latest"
+  }
+
+  storage_os_disk {
+    name              = "web"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Standard_LRS"
+  }
+
+  os_profile {
+    computer_name  = "web"
+    admin_username = "testadmin"
+    admin_password = "Password4321!"
+    custom_data    = <<EOF
+#!/bin/bash
+sudo apt-get update -y &&
+sudo apt-get install -y nginx zsh
+EOF
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }
+}
+
+resource "azurerm_public_ip" "web" {
+  name                = "web"
+  resource_group_name = data.azurerm_resource_group.rileysnyderharnessio.name
+  location            = "centralus"
+  allocation_method   = "Static"
+  sku                 = "Standard"
+  domain_name_label   = "azurestopping"
+}
+
+resource "azurerm_application_gateway" "web" {
+  name                = "web"
+  resource_group_name = data.azurerm_resource_group.rileysnyderharnessio.name
+  location            = "centralus"
+
+  sku {
+    name     = "Standard_v2"
+    tier     = "Standard_v2"
+    capacity = 1
+  }
+
+  gateway_ip_configuration {
+    name      = "default"
+    subnet_id = azurerm_virtual_network.rileysnyderharnessio.subnet.*.id[1]
+  }
+
+  frontend_port {
+    name = "frontend"
+    port = 80
+  }
+
+  frontend_ip_configuration {
+    name                 = "frontend"
+    public_ip_address_id = azurerm_public_ip.web.id
+  }
+
+  backend_address_pool {
+    name = "web"
+    ip_addresses = [
+      azurerm_network_interface.web.private_ip_address
+    ]
+  }
+
+  backend_http_settings {
+    name                  = "web"
+    cookie_based_affinity = "Disabled"
+    path                  = "/"
+    port                  = 80
+    protocol              = "Http"
+    request_timeout       = 60
+  }
+
+  http_listener {
+    name                           = "web"
+    frontend_ip_configuration_name = "frontend"
+    frontend_port_name             = "frontend"
+    protocol                       = "Http"
+  }
+
+  request_routing_rule {
+    name                       = "web"
+    priority                   = 9
+    rule_type                  = "Basic"
+    http_listener_name         = "web"
+    backend_address_pool_name  = "web"
+    backend_http_settings_name = "web"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      backend_address_pool,
+      backend_http_settings,
+      http_listener,
+      probe,
+      request_routing_rule
+    ]
+  }
 }

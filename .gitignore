@@ -39,4 +39,4 @@ terraform/*.zip
 terraform/*.json
 
 # backend file for local use
-terraform/backend.local.tf
+**/backend.local.tf
