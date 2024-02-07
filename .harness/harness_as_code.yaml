@@ -28,14 +28,11 @@ pipeline:
                   spec:
                     command: init
               - step:
-                  type: Run
                   name: tflint
                   identifier: tflint
-                  spec:
-                    connectorRef: account.harnessImage
-                    image: ghcr.io/terraform-linters/tflint
-                    shell: Sh
-                    command: tflint
+                  template:
+                    templateRef: account.tflint
+                    versionLabel: 0.0.1
               - step:
                   type: IACMTerraformPlugin
                   name: plan
@@ -45,23 +42,17 @@ pipeline:
                     command: plan
               - parallel:
                   - step:
-                      type: Run
                       name: checkov
                       identifier: checkov
-                      spec:
-                        connectorRef: account.harnessImage
-                        image: bridgecrew/checkov
-                        shell: Sh
-                        command: checkov -f <+pipeline.stages.tf.spec.execution.steps.plan.output.outputVariables.plan>
+                      template:
+                        templateRef: account.checkov
+                        versionLabel: 0.0.1
                   - step:
-                      type: Run
                       name: tfsec
                       identifier: tfsec
-                      spec:
-                        connectorRef: account.harnessImage
-                        image: aquasec/tfsec
-                        shell: Sh
-                        command: tfsec --soft-fail .
+                      template:
+                        templateRef: account.tfsec
+                        versionLabel: 0.0.1
               - step:
                   type: IACMApproval
                   name: approve
