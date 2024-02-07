@@ -269,3 +269,50 @@ resource "azurerm_application_gateway" "web" {
     ]
   }
 }
+
+resource "harness_autostopping_azure_gateway" "web" {
+  name                              = "web"
+  cloud_connector_id                = "azuresalesccm"
+  host_name                         = "azurestopping.centralus.cloudapp.azure.com"
+  region                            = "centralus"
+  resource_group                    = data.azurerm_resource_group.rileysnyderharnessio.name
+  app_gateway_id                    = azurerm_application_gateway.web.id
+  azure_func_region                 = "centralus"
+  vpc                               = azurerm_virtual_network.rileysnyderharnessio.id
+  delete_cloud_resources_on_destroy = false
+}
+
+resource "harness_autostopping_rule_vm" "web" {
+  name               = "web"
+  cloud_connector_id = "azuresalesccm"
+  idle_time_mins     = 5
+  filter {
+    vm_ids = [
+      azurerm_virtual_machine.web.id
+    ]
+    regions = [
+      "centralus"
+    ]
+  }
+  http {
+    proxy_id = harness_autostopping_azure_gateway.web.id
+    routing {
+      source_protocol = "http"
+      target_protocol = "http"
+      source_port     = 80
+      target_port     = 80
+      action          = "forward"
+    }
+    health {
+      protocol         = "http"
+      port             = 80
+      path             = "/"
+      timeout          = 30
+      status_code_from = 200
+      status_code_to   = 399
+    }
+  }
+  custom_domains = [
+    "azurestopping.centralus.cloudapp.azure.com"
+  ]
+}
