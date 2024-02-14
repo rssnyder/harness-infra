@@ -111,7 +111,7 @@ resource "harness_platform_connector_gcp_cloud_cost" "gcpccm" {
   name       = "gcp-ccm"
 
   features_enabled      = ["BILLING", "VISIBILITY", "OPTIMIZATION"]
-  gcp_project_id        = "example-proj-234"
+  gcp_project_id        = "sales-209522"
   service_account_email = "harness-ce-wlgel-78524@ce-prod-274307.iam.gserviceaccount.com"
   billing_export_spec {
     data_set_id = "data_set_id"

@@ -127,7 +127,7 @@ resource "azurerm_container_group" "delegate" {
       DELEGATE_NAME             = "aci"
       NEXT_GEN                  = "true"
       DELEGATE_TYPE             = "DOCKER"
-      ACCOUNT_ID                = data.harness_current_account.current.id
+      ACCOUNT_ID                = data.harness_platform_current_account.current.id
       LOG_STREAMING_SERVICE_URL = "https://app.harness.io/gratis/log-service/" # change based on your account
       MANAGER_HOST_AND_PORT     = "https://app.harness.io/gratis"              # change based on your account
     }

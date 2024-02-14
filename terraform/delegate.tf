@@ -61,7 +61,7 @@ module "delegate" {
   source = "git::https://github.com/harness-community/terraform-aws-harness-delegate-ecs-fargate.git?ref=main"
   # source                    = "../../terraform-aws-harness-delegate-ecs-fargate"
   name                      = "ecs"
-  harness_account_id        = data.harness_current_account.current.id
+  harness_account_id        = data.harness_platform_current_account.current.id
   delegate_image            = "rssnyder/delegate:latest"
   desired_count             = 1
   delegate_token_secret_arn = "arn:aws:secretsmanager:us-west-2:759984737373:secret:riley/delegate-zBsttc"
@@ -132,5 +132,3 @@ resource "harness_autostopping_rule_ecs" "ecs_work_hours" {
 #     # }
 #   ]
 # }
-
-
