@@ -1,3 +1,13 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: Project
+  title: Create a new project
+  description: A template to create a new project
+  tags:
+    - project
+    - structure
+    - harness
 parameters:
   - title: Project metadata
     required:
