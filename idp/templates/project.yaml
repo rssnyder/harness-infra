@@ -1,0 +1,40 @@
+parameters:
+  - title: Project metadata
+    required:
+      - name
+      - owner
+      - organization
+    properties:
+      name:
+        title: Name
+        type: string
+        description: Name of the project
+      description:
+        title: Description
+        type: string
+        description: Description of the project
+      owner:
+        title: Owner
+        type: string
+        description: Owner of the project
+        ui:field: OwnerPicker
+        ui:options:
+          catalogFilter:
+            kind: Group
+      organization:
+        title: Organization
+        type: string
+        description: Organization for the project
+        ui:field: HarnessOrgPicker
+
+steps:
+  - id: trigger
+    name: Bootstrapping your new project
+    action: trigger:harness-custom-pipeline
+    input:
+      url: "https://app.harness.io/ng/account/wlgELJ0TTre5aZhzpt8gVA/module/cd/orgs/default/projects/IDP/pipelines/project"
+      inputset:
+        organization: ${{ parameters.organization }}
+        project: ${{ parameters.name }}
+        description: ${{ parameters.description }}
+      apikey: test
