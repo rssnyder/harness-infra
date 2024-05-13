@@ -38,6 +38,11 @@ spec:
           type: string
           description: Organization for the project
           ui:field: HarnessOrgPicker
+        token:
+          title: Harness Token
+          type: string
+          ui:widget: password
+          ui:field: HarnessAuthToken
   
   steps:
     - id: trigger
@@ -49,7 +54,7 @@ spec:
           organization: ${{ parameters.organization }}
           project: ${{ parameters.name }}
           description: ${{ parameters.description }}
-        apikey: test
+        apikey: ${{ parameters.token }}
 
   output:
     links:
