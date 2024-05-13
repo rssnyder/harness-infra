@@ -54,6 +54,7 @@ spec:
           organization: ${{ parameters.organization }}
           project: ${{ parameters.name }}
           description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
         apikey: ${{ parameters.token }}
 
   output:
