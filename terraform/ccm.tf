@@ -2,9 +2,9 @@ module "ccm" {
   # source  = "harness-community/harness-ccm/aws"
   # version = "0.1.6"
 
-  source = "../../terraform-aws-harness-ccm"
+  # source = "../../terraform-aws-harness-ccm"
 
-  # source = "git::https://github.com/tuffacton/terraform-aws-harness-ccm?ref=nicacton-branch-2"
+  source = "git::https://github.com/rssnyder/terraform-aws-harness-ccm?ref=fix/lambda-exe-kms"
 
   s3_bucket_arn = "arn:aws:s3:::harness-solutions-architecture"
   external_id   = "harness:891928451355:wlgELJ0TTre5aZhzpt8gVA"
