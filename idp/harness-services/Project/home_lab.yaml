@@ -1,0 +1,10 @@
+kind: System
+apiVersion: backstage.io/v1alpha1
+metadata:
+  name: home_lab
+  description: ""
+  title: home_lab
+  tags: []
+spec:
+  owner: Unknown
+  domain: default

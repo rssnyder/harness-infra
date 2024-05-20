@@ -1,0 +1,20 @@
+# file: catalog-info.yaml
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: homer
+  description: Description of my new service
+  annotations:
+    purpose: demo
+  tags:
+    - homelab
+  links:
+    - url: https://dash.rileysnyder.dev
+      title: homer
+      icon: dashboard
+      type: admin-dashboard
+spec:
+  type: service
+  lifecycle: production
+  owner: admin
+  system: project-x
