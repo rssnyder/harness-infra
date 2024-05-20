@@ -92,3 +92,26 @@ resource "aws_iam_role_policy_attachment" "rileysnyderharnessio-assumed-again-fi
   role       = aws_iam_role.rileysnyderharnessio-assumed-again-final.name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
+
+resource "aws_iam_policy" "governance-tagging" {
+  name        = "governance-tagging"
+  description = "Policy for tagging things"
+
+  policy = <<EOF
+{
+   "Version": "2012-10-17",
+   "Statement": [
+       {
+           "Sid": "Tagging",
+           "Effect": "Allow",
+           "Action": [
+            "ec2:CreateTags",
+            "ec2:DeleteTags",
+            "ec2:DescribeTags"
+           ],
+           "Resource": "*"
+       }
+   ]
+}
+EOF
+}

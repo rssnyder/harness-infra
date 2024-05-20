@@ -1,8 +1,10 @@
 module "ccm" {
-  source  = "harness-community/harness-ccm/aws"
-  version = "0.1.4"
+  # source  = "harness-community/harness-ccm/aws"
+  # version = "0.1.6"
 
-  # source = "../../terraform-aws-harness-ccm"
+  source = "../../terraform-aws-harness-ccm"
+
+  # source = "git::https://github.com/tuffacton/terraform-aws-harness-ccm?ref=nicacton-branch-2"
 
   s3_bucket_arn = "arn:aws:s3:::harness-solutions-architecture"
   external_id   = "harness:891928451355:wlgELJ0TTre5aZhzpt8gVA"
@@ -11,18 +13,19 @@ module "ccm" {
   ]
   enable_billing          = true
   enable_events           = true
-  enable_optimization     = true
-  enable_governance       = true
-  enable_commitment_read  = true
-  enable_commitment_write = true
+  enable_optimization     = false
+  enable_governance       = false
+  enable_commitment_read  = false
+  enable_commitment_write = false
 
-  # enable_cmk_ebs                     = true
-  # enable_autostopping_elb            = true
-  # enable_autostopping_ec2            = true
-  # enable_autostopping_asg_rds_lambda = true
+  enable_cmk_ebs                     = false
+  enable_autostopping_elb            = true
+  enable_autostopping_ec2            = true
+  enable_autostopping_asg_rds_lambda = true
 
   governance_policy_arns = [
-    aws_iam_policy.delegate_aws_access.arn
+    aws_iam_policy.governance-tagging.arn,
+    "arn:aws:iam::aws:policy/AdministratorAccess"
   ]
   prefix = "riley-"
   secrets = [

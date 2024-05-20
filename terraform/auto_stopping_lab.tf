@@ -12,7 +12,7 @@ resource "harness_platform_workspace" "aws_ec2" {
   provisioner_type        = "terraform"
   provisioner_version     = "1.5.6"
   repository              = "wings-software/AutoStoppingLab"
-  repository_branch       = "chore/ec2-enhancements"
+  repository_branch       = "main"
   repository_path         = "aws/ec2"
   cost_estimation_enabled = true
 
@@ -75,7 +75,7 @@ resource "harness_platform_workspace" "aws_proxy" {
   provisioner_type        = "terraform"
   provisioner_version     = "1.5.6"
   repository              = "wings-software/AutoStoppingLab"
-  repository_branch       = "chore/ec2-proxy-enhance"
+  repository_branch       = "main"
   repository_path         = "aws/proxy"
   cost_estimation_enabled = true
 
@@ -144,7 +144,7 @@ resource "harness_platform_workspace" "aws_ec2_proxy" {
   provisioner_type        = "terraform"
   provisioner_version     = "1.5.6"
   repository              = "wings-software/AutoStoppingLab"
-  repository_branch       = "chore/ec2-proxy-enhance"
+  repository_branch       = "main"
   repository_path         = "aws/ec2-with-proxy"
   cost_estimation_enabled = true
 
@@ -218,7 +218,7 @@ resource "harness_platform_workspace" "aws_rds" {
   provisioner_type        = "terraform"
   provisioner_version     = "1.5.6"
   repository              = "wings-software/AutoStoppingLab"
-  repository_branch       = "chore/enhance-rds"
+  repository_branch       = "main"
   repository_path         = "aws/rds"
   cost_estimation_enabled = true
 
@@ -286,7 +286,7 @@ resource "harness_platform_workspace" "aws_ecs" {
   provisioner_type        = "terraform"
   provisioner_version     = "1.5.6"
   repository              = "wings-software/AutoStoppingLab"
-  repository_branch       = "chore/enhance-ecs"
+  repository_branch       = "main"
   repository_path         = "aws/ecs"
   cost_estimation_enabled = true
 

@@ -1,3 +1,7 @@
+data "aws_vpc" "default" {
+  default = true
+}
+
 data "aws_vpc" "sa-lab" {
   tags = {
     Name = "sa-lab"
