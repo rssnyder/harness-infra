@@ -1,2 +1,0 @@
-ARG SOURCE_TAG=1.16.44
-FROM harness/ci-addon:$SOURCE_TAG
