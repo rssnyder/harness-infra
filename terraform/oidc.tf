@@ -47,13 +47,13 @@ resource "aws_iam_role_policy_attachment" "this" {
 }
 
 # create the harness aws connector that leverages our oidc role
-# resource "harness_platform_connector_aws" "oidc" {
-#   identifier = "oidc${data.aws_caller_identity.current.account_id}"
-#   name       = "oidc${data.aws_caller_identity.current.account_id}"
+resource "harness_platform_connector_aws" "oidc" {
+  identifier = "oidc${data.aws_caller_identity.current.account_id}"
+  name       = "oidc${data.aws_caller_identity.current.account_id}"
 
-#   oidc_authentication {
-#     iam_role_arn = aws_iam_role.this.arn
-#     region       = "us-east-1"
-#     # delegate_selectors = []
-#   }
-# }
+  oidc_authentication {
+    iam_role_arn       = aws_iam_role.this.arn
+    region             = "us-east-1"
+    delegate_selectors = []
+  }
+}
