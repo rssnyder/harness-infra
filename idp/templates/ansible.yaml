@@ -1,0 +1,32 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: Ansible Playbook
+  title: Run an ansible playbook
+  description: A template to run ansible playbooks from isengard
+  tags:
+    - ansible
+spec:
+  type: ansible
+  parameters:
+    - title: Playbook metadata
+      required:
+        - playbook
+      properties:
+        playbook:
+          title: Playbook
+          type: string
+          description: Playbook to execute
+  steps:
+    - id: trigger
+      name: Running your playbook
+      action: trigger:harness-custom-pipeline
+      input:
+        url: "https://app.harness.io/ng/account/wlgELJ0TTre5aZhzpt8gVA/all/orgs/default/projects/home_lab/pipelines/ansible/pipeline-studio"
+        inputset:
+          playbook: ${{ parameters.playbook }}
+        apikey: ${{ parameters.token }}
+  output:
+    links:
+      - title: Pipeline Details
+        url: ${{ steps.trigger.output.PipelineUrl }}
