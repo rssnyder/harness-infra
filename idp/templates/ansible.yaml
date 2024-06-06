@@ -17,6 +17,11 @@ spec:
           title: Playbook
           type: string
           description: Playbook to execute
+        token:
+          title: Harness Token
+          type: string
+          ui:widget: password
+          ui:field: HarnessAuthToken
   steps:
     - id: trigger
       name: Running your playbook
