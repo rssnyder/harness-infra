@@ -1,7 +1,7 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: Ansible Playbook
+  name: Ansible_Playbook
   title: Run an ansible playbook
   description: A template to run ansible playbooks from isengard
   tags:
