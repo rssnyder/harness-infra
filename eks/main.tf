@@ -103,6 +103,10 @@ resource "aws_iam_role_policy_attachment" "sales_eks_assumed" {
 resource "null_resource" "kubeconfig" {
   depends_on = [module.eks]
 
+  triggers = {
+    revision = helm_release.harness-delegate-ng.metadata.revision
+  }
+
   provisioner "local-exec" {
     command = "aws eks update-kubeconfig --region ${data.aws_region.current.name} --name ${module.eks.cluster_name}"
   }
