@@ -110,6 +110,28 @@ resource "aws_iam_role_policy_attachment" "sales_eks_assumed" {
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
+locals {
+  getKubeConfig = ["aws", "eks", "update-kubeconfig", "--region", data.aws_region.current.name, "--name", module.eks.cluster_name]
+  values = {
+    delegateName        = "home"
+    accountId           = data.harness_platform_current_account.current.account_id
+    delegateToken       = var.delegate_token
+    managerEndpoint     = "https://app.harness.io/gratis"
+    delegateDockerImage = "harness/delegate:24.01.82202"
+    replicas            = 1
+    cpu                 = "100m"
+    serviceAccountAnnotations = {
+      "eks.amazonaws.com/role-arn" : "arn:aws:iam::759984737373:role/sales_eks"
+    }
+  }
+}
+
+# get config for helm plan
+data "external" "kubeconfig" {
+  program = local.getKubeConfig
+}
+
+# get config for helm apply
 resource "null_resource" "kubeconfig" {
   depends_on = [module.eks]
 
@@ -118,7 +140,7 @@ resource "null_resource" "kubeconfig" {
   }
 
   provisioner "local-exec" {
-    command = "aws eks update-kubeconfig --region ${data.aws_region.current.name} --name ${module.eks.cluster_name}"
+    command = join(" ", local.getKubeConfig)
   }
 }
 
