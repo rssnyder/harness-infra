@@ -112,6 +112,21 @@ resource "null_resource" "kubeconfig" {
   }
 }
 
+locals {
+  values = {
+    delegateName = "home"
+    accountId = data.harness_platform_current_account.current.account_id
+    delegateToken = var.delegate_token
+    managerEndpoint = "https://app.harness.io/gratis"
+    delegateDockerImage = "harness/delegate:24.01.82202"
+    replicas = 1
+    cpu = "100m"
+    serviceAccountAnnotations = {
+      "eks.amazonaws.com/role-arn" : "arn:aws:iam::759984737373:role/sales_eks"
+    }
+  }
+}
+
 resource "helm_release" "harness-delegate-ng" {
   depends_on = [null_resource.kubeconfig]
 
@@ -119,38 +134,7 @@ resource "helm_release" "harness-delegate-ng" {
   repository = "https://app.harness.io/storage/harness-download/delegate-helm-chart"
   chart      = "harness-delegate-ng"
 
-  set {
-    name  = "delegateName"
-    value = "sales-eks"
-  }
-  set {
-    name  = "accountId"
-    value = data.harness_platform_current_account.current.account_id
-  }
-  set {
-    name  = "delegateToken"
-    value = var.delegate_token
-  }
-  set {
-    name  = "managerEndpoint"
-    value = "https://app.harness.io/gratis"
-  }
-  set {
-    name  = "delegateDockerImage"
-    value = "harness/delegate:24.06.83203"
-  }
-  set {
-    name  = "upgrader.enabled"
-    value = "false"
-  }
-  set {
-    name  = "memory"
-    value = "1024"
-  }
-  set {
-    name  = "serviceAccount.annotations"
-    value = yamlencode({"eks.amazonaws.com/role-arn":"arn:aws:iam::759984737373:role/sales_eks"})
-  }
+  values = [ yamlencode(local.values) ]
 }
 
 resource "harness_platform_connector_kubernetes" "sales_eks" {
