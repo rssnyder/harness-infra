@@ -36,6 +36,16 @@ module "eks" {
   }
 }
 
+resource "aws_eks_access_policy_association" "sso_cluster_admin" {
+  cluster_name  = module.eks.cluster_name
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+  principal_arn = "arn:aws:iam::759984737373:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSPowerUserAccess_c9634c1cd159b7c2"
+
+  access_scope {
+    type = "cluster"
+  }
+}
+
 data "aws_iam_policy_document" "sales_eks" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
@@ -114,13 +124,13 @@ resource "null_resource" "kubeconfig" {
 
 locals {
   values = {
-    delegateName = "home"
-    accountId = data.harness_platform_current_account.current.account_id
-    delegateToken = var.delegate_token
-    managerEndpoint = "https://app.harness.io/gratis"
+    delegateName        = "home"
+    accountId           = data.harness_platform_current_account.current.account_id
+    delegateToken       = var.delegate_token
+    managerEndpoint     = "https://app.harness.io/gratis"
     delegateDockerImage = "harness/delegate:24.01.82202"
-    replicas = 1
-    cpu = "100m"
+    replicas            = 1
+    cpu                 = "100m"
     serviceAccountAnnotations = {
       "eks.amazonaws.com/role-arn" : "arn:aws:iam::759984737373:role/sales_eks"
     }
@@ -134,7 +144,7 @@ resource "helm_release" "harness-delegate-ng" {
   repository = "https://app.harness.io/storage/harness-download/delegate-helm-chart"
   chart      = "harness-delegate-ng"
 
-  values = [ yamlencode(local.values) ]
+  values = [yamlencode(local.values)]
 }
 
 resource "harness_platform_connector_kubernetes" "sales_eks" {
