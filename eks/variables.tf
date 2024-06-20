@@ -1,3 +1,3 @@
-variable "delegate_token" {
-  type = string
-}
+# variable "delegate_token" {
+#   type = string
+# }

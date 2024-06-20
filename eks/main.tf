@@ -24,6 +24,22 @@ module "eks" {
 
   enable_cluster_creator_admin_permissions = true
 
+  access_entries = {
+    sso = {
+      kubernetes_groups = []
+      principal_arn     = "arn:aws:iam::759984737373:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSPowerUserAccess_c9634c1cd159b7c2"
+
+      policy_associations = {
+        example = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type       = "cluster"
+          }
+        }
+      }
+    }
+  }
+
   eks_managed_node_groups = {
     example = {
       ami_type       = "AL2_x86_64"
@@ -33,16 +49,6 @@ module "eks" {
       max_size     = 5
       desired_size = 2
     }
-  }
-}
-
-resource "aws_eks_access_policy_association" "sso_cluster_admin" {
-  cluster_name  = module.eks.cluster_name
-  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-  principal_arn = "arn:aws:iam::759984737373:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSPowerUserAccess_c9634c1cd159b7c2"
-
-  access_scope {
-    type = "cluster"
   }
 }
 
@@ -110,21 +116,21 @@ resource "aws_iam_role_policy_attachment" "sales_eks_assumed" {
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
-locals {
-  getKubeConfig = ["aws", "eks", "update-kubeconfig", "--region", data.aws_region.current.name, "--name", module.eks.cluster_name]
-  values = {
-    delegateName        = "home"
-    accountId           = data.harness_platform_current_account.current.account_id
-    delegateToken       = var.delegate_token
-    managerEndpoint     = "https://app.harness.io/gratis"
-    delegateDockerImage = "harness/delegate:24.01.82202"
-    replicas            = 1
-    cpu                 = "100m"
-    serviceAccountAnnotations = {
-      "eks.amazonaws.com/role-arn" : "arn:aws:iam::759984737373:role/sales_eks"
-    }
-  }
-}
+# locals {
+#   getKubeConfig = ["aws", "eks", "update-kubeconfig", "--region", data.aws_region.current.name, "--name", module.eks.cluster_name]
+#   values = {
+#     delegateName        = "home"
+#     accountId           = data.harness_platform_current_account.current.account_id
+#     delegateToken       = var.delegate_token
+#     managerEndpoint     = "https://app.harness.io/gratis"
+#     delegateDockerImage = "harness/delegate:24.01.82202"
+#     replicas            = 1
+#     cpu                 = "100m"
+#     serviceAccountAnnotations = {
+#       "eks.amazonaws.com/role-arn" : "arn:aws:iam::759984737373:role/sales_eks"
+#     }
+#   }
+# }
 
 # get config for helm plan
 # data "external" "kubeconfig" {
@@ -190,3 +196,14 @@ resource "harness_platform_connector_aws" "sales_eks_aws_assumed" {
   }
 }
 
+
+terraform {
+  backend "http" {
+    address = "https://app.harness.io/gateway/iacm/api/orgs/default/projects/iacm/workspaces/eks/terraform-backend?accountIdentifier=wlgELJ0TTre5aZhzpt8gVA"
+    username = "harness"
+    lock_address = "https://app.harness.io/gateway/iacm/api/orgs/default/projects/iacm/workspaces/eks/terraform-backend/lock?accountIdentifier=wlgELJ0TTre5aZhzpt8gVA"
+    lock_method = "POST"
+    unlock_address = "https://app.harness.io/gateway/iacm/api/orgs/default/projects/iacm/workspaces/eks/terraform-backend/lock?accountIdentifier=wlgELJ0TTre5aZhzpt8gVA"
+    unlock_method = "DELETE"
+  }
+}
