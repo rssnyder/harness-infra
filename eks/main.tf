@@ -1,3 +1,6 @@
+data "aws_region" "current" {}
+data "harness_platform_current_account" "current" {}
+
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 20.0"
@@ -97,17 +100,54 @@ resource "aws_iam_role_policy_attachment" "sales_eks_assumed" {
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
-# aws eks update-kubeconfig --region us-west-2 --name rssnyder
-# helm upgrade -i sales-eks --namespace harness-delegate-ng --create-namespace \
-#   harness-delegate/harness-delegate-ng \                               
-#   --set delegateName=sales-eks \
-#   --set accountId=wlgELJ0TTre5aZhzpt8gVA \
-#   --set delegateToken=$HARNESS_DELEGATE_TOKEN \
-#   --set managerEndpoint=https://app.harness.io/gratis \
-#   --set delegateDockerImage=harness/delegate:24.06.83203 \
-#   --set upgrader.enabled=false
-#   --set memory=1024
-#   --set-json serviceAccount.annotations='{"eks.amazonaws.com/role-arn":"arn:aws:iam::759984737373:role/sales_eks"}'
+resource "null_resource" "kubeconfig" {
+  depends_on = [module.eks]
+
+  provisioner "local-exec" {
+    command = "aws eks update-kubeconfig --region ${data.aws_region.current.name} --name ${module.eks.cluster_name}"
+  }
+}
+
+resource "helm_release" "harness-delegate-ng" {
+  depends_on = [null_resource.kubeconfig]
+
+  name       = "harness-delegate-ng"
+  repository = "https://app.harness.io/storage/harness-download/delegate-helm-chart"
+  chart      = "harness-delegate-ng"
+
+  set {
+    name  = "delegateName"
+    value = "sales-eks"
+  }
+  set {
+    name  = "accountId"
+    value = data.harness_platform_current_account.id
+  }
+  set {
+    name  = "delegateToken"
+    value = var.delegate_token
+  }
+  set {
+    name  = "managerEndpoint"
+    value = "https://app.harness.io/gratis"
+  }
+  set {
+    name  = "delegateDockerImage"
+    value = "harness/delegate:24.06.83203"
+  }
+  set {
+    name  = "upgrader.enabled"
+    value = "false"
+  }
+  set {
+    name  = "memory"
+    value = "1024"
+  }
+  set {
+    name  = "serviceAccount.annotations"
+    value = "{\"eks.amazonaws.com/role-arn\":\"arn:aws:iam::759984737373:role/sales_eks\"}"
+  }
+}
 
 resource "harness_platform_connector_kubernetes" "sales_eks" {
   identifier = "sales_eks"
