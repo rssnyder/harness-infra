@@ -121,7 +121,7 @@ resource "helm_release" "harness-delegate-ng" {
   }
   set {
     name  = "accountId"
-    value = data.harness_platform_current_account.id
+    value = data.harness_platform_current_account.current.account_id
   }
   set {
     name  = "delegateToken"
