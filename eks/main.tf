@@ -104,7 +104,7 @@ resource "null_resource" "kubeconfig" {
   depends_on = [module.eks]
 
   triggers = {
-    revision = helm_release.harness-delegate-ng.metadata.revision
+    always = timestamp()
   }
 
   provisioner "local-exec" {
