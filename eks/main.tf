@@ -144,21 +144,6 @@ resource "null_resource" "kubeconfig" {
   }
 }
 
-locals {
-  values = {
-    delegateName        = "home"
-    accountId           = data.harness_platform_current_account.current.account_id
-    delegateToken       = var.delegate_token
-    managerEndpoint     = "https://app.harness.io/gratis"
-    delegateDockerImage = "harness/delegate:24.01.82202"
-    replicas            = 1
-    cpu                 = "100m"
-    serviceAccountAnnotations = {
-      "eks.amazonaws.com/role-arn" : "arn:aws:iam::759984737373:role/sales_eks"
-    }
-  }
-}
-
 resource "helm_release" "harness-delegate-ng" {
   depends_on = [null_resource.kubeconfig]
 
