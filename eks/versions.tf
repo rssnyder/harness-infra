@@ -24,4 +24,8 @@ provider "aws" {
 
 provider "harness" {}
 
-provider "helm" {}
+provider "helm" {
+  kubernetes {
+    config_path = "~/.kube/config"
+  }
+}
