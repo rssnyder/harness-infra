@@ -1,20 +1,12 @@
 terraform {
   required_providers {
-    random = {
-      source  = "hashicorp/random"
-      version = "3.5.1"
-    }
     aws = {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "=3.0.0"
-    }
     harness = {
       source  = "harness/harness"
-      version = "0.30.8"
+      version = "~> 0.30"
     }
   }
 }
@@ -24,13 +16,10 @@ provider "aws" {
   default_tags {
     tags = {
       owner = "riley.snyder@harness.io"
+      note  = "should delete at 5pm CST"
       ttl   = "-1"
     }
   }
-}
-
-provider "azurerm" {
-  features {}
 }
 
 provider "harness" {}

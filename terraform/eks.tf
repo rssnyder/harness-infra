@@ -1,20 +1,3 @@
-# resource "aws_iam_policy" "sa-eks-additional" {
-#   name = "sa-eks-additional"
-
-#   policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = [
-#       {
-#         Action = [
-#           "ec2:Describe*",
-#         ]
-#         Effect   = "Allow"
-#         Resource = "*"
-#       },
-#     ]
-#   })
-# }
-
 # module "eks" {
 #   source  = "terraform-aws-modules/eks/aws"
 #   version = "~> 20.0"
@@ -25,29 +8,128 @@
 #   cluster_endpoint_public_access = true
 
 #   cluster_addons = {
-#     kube-proxy = {}
-#     vpc-cni    = {}
-#     coredns = {
-#       configuration_values = jsonencode({
-#         computeType = "Fargate"
-#       })
-#     }
+#     coredns                = {}
+#     eks-pod-identity-agent = {}
+#     kube-proxy             = {}
+#     vpc-cni                = {}
 #   }
 
 #   vpc_id     = data.aws_vpc.sa-lab.id
 #   subnet_ids = data.aws_subnets.sa-lab-private.ids
-#   #   control_plane_subnet_ids = ["subnet-xyzde987", "subnet-slkjf456", "subnet-qeiru789"]
 
-#   create_cluster_security_group = false
-#   create_node_security_group    = false
+#   enable_irsa = true
 
-#   fargate_profile_defaults = {
-#     iam_role_additional_policies = {
-#       additional = aws_iam_policy.sa-eks-additional.arn
+#   enable_cluster_creator_admin_permissions = true
+
+#   eks_managed_node_groups = {
+#     example = {
+#       ami_type       = "AL2_x86_64"
+#       instance_types = ["t3.medium"]
+
+#       min_size     = 2
+#       max_size     = 5
+#       desired_size = 2
 #     }
 #   }
+# }
 
-#   tags = {
-#     Team = "sa"
+# data "aws_iam_policy_document" "sa_eks" {
+#   statement {
+#     actions = ["sts:AssumeRoleWithWebIdentity"]
+
+#     principals {
+#       type = "Federated"
+#       identifiers = [
+#         module.eks.oidc_provider_arn
+#       ]
+#     }
+
+#     condition {
+#       test     = "StringEquals"
+#       variable = "${module.eks.oidc_provider}:sub"
+#       values = [
+#         "system:serviceaccount:harness-delegate-ng:sa-eks"
+#       ]
+#     }
+
+#     condition {
+#       test     = "StringEquals"
+#       variable = "${module.eks.oidc_provider}:aud"
+#       values = [
+#         "sts.amazonaws.com"
+#       ]
+#     }
 #   }
 # }
+
+# resource "aws_iam_role" "sa_eks" {
+#   name                 = "sa_eks"
+#   assume_role_policy   = data.aws_iam_policy_document.sa_eks.json
+#   max_session_duration = 28800
+# }
+
+# resource "aws_iam_role_policy_attachment" "sa_eks" {
+#   role       = aws_iam_role.sa_eks.name
+#   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+# }
+
+# data "aws_iam_policy_document" "sa_eks_assumed" {
+#   statement {
+#     actions = ["sts:AssumeRole"]
+
+#     principals {
+#       type = "AWS"
+#       identifiers = [
+#         aws_iam_role.sa_eks.arn
+#       ]
+#     }
+#   }
+# }
+
+# resource "aws_iam_role" "sa_eks_assumed" {
+#   name                 = "sa_eks_assumed"
+#   assume_role_policy   = data.aws_iam_policy_document.sa_eks_assumed.json
+#   max_session_duration = 28800
+# }
+
+# resource "aws_iam_role_policy_attachment" "sa_eks_assumed" {
+#   role       = aws_iam_role.sa_eks_assumed.name
+#   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+# }
+
+# resource "harness_platform_connector_kubernetes" "sa_eks" {
+#   identifier = "sa_eks"
+#   name       = "sa_eks"
+
+#   inherit_from_delegate {
+#     delegate_selectors = ["sa-eks"]
+#   }
+# }
+
+# resource "harness_platform_connector_aws" "sa_eks_aws" {
+#   identifier = "sa_eks_aws"
+#   name       = "sa_eks_aws"
+
+#   irsa {
+#     delegate_selectors = [
+#       "sa-eks"
+#     ]
+#     region = "us-west-2"
+#   }
+# }
+
+# resource "harness_platform_connector_aws" "sa_eks_aws_assumed" {
+#   identifier = "sa_eks_aws_assumed"
+#   name       = "sa_eks_aws_assumed"
+
+#   inherit_from_delegate {
+#     delegate_selectors = [
+#       "sa-eks"
+#     ]
+#     region = "us-west-2"
+#   }
+#   cross_account_access {
+#     role_arn = aws_iam_role.sa_eks_assumed.arn
+#   }
+# }
+
