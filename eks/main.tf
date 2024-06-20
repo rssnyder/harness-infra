@@ -195,15 +195,3 @@ resource "harness_platform_connector_aws" "sales_eks_aws_assumed" {
     role_arn = aws_iam_role.sales_eks_assumed.arn
   }
 }
-
-
-terraform {
-  backend "http" {
-    address = "https://app.harness.io/gateway/iacm/api/orgs/default/projects/iacm/workspaces/eks/terraform-backend?accountIdentifier=wlgELJ0TTre5aZhzpt8gVA"
-    username = "harness"
-    lock_address = "https://app.harness.io/gateway/iacm/api/orgs/default/projects/iacm/workspaces/eks/terraform-backend/lock?accountIdentifier=wlgELJ0TTre5aZhzpt8gVA"
-    lock_method = "POST"
-    unlock_address = "https://app.harness.io/gateway/iacm/api/orgs/default/projects/iacm/workspaces/eks/terraform-backend/lock?accountIdentifier=wlgELJ0TTre5aZhzpt8gVA"
-    unlock_method = "DELETE"
-  }
-}
