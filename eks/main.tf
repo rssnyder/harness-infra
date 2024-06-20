@@ -149,7 +149,7 @@ resource "helm_release" "harness-delegate-ng" {
   }
   set {
     name  = "serviceAccount.annotations"
-    value = "{\"eks.amazonaws.com/role-arn\":\"arn:aws:iam::759984737373:role/sales_eks\"}"
+    value = yamlencode({"eks.amazonaws.com/role-arn":"arn:aws:iam::759984737373:role/sales_eks"})
   }
 }
 
