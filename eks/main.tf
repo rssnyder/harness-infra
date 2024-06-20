@@ -127,32 +127,32 @@ locals {
 }
 
 # get config for helm plan
-data "external" "kubeconfig" {
-  program = local.getKubeConfig
-}
+# data "external" "kubeconfig" {
+#   program = local.getKubeConfig
+# }
 
-# get config for helm apply
-resource "null_resource" "kubeconfig" {
-  depends_on = [module.eks]
+# # get config for helm apply
+# resource "null_resource" "kubeconfig" {
+#   depends_on = [module.eks]
 
-  triggers = {
-    always = timestamp()
-  }
+#   triggers = {
+#     always = timestamp()
+#   }
 
-  provisioner "local-exec" {
-    command = join(" ", local.getKubeConfig)
-  }
-}
+#   provisioner "local-exec" {
+#     command = join(" ", local.getKubeConfig)
+#   }
+# }
 
-resource "helm_release" "harness-delegate-ng" {
-  depends_on = [null_resource.kubeconfig]
+# resource "helm_release" "harness-delegate-ng" {
+#   depends_on = [null_resource.kubeconfig]
 
-  name       = "harness-delegate-ng"
-  repository = "https://app.harness.io/storage/harness-download/delegate-helm-chart"
-  chart      = "harness-delegate-ng"
+#   name       = "harness-delegate-ng"
+#   repository = "https://app.harness.io/storage/harness-download/delegate-helm-chart"
+#   chart      = "harness-delegate-ng"
 
-  values = [yamlencode(local.values)]
-}
+#   values = [yamlencode(local.values)]
+# }
 
 resource "harness_platform_connector_kubernetes" "sales_eks" {
   identifier = "sales_eks"
