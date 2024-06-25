@@ -48,6 +48,8 @@ spec:
             catalogFilter:
               kind: 
               - Component
+              metadata.additionalInfo.foo:
+              - bar
         token:
           title: Harness Token
           type: string
