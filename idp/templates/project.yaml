@@ -38,6 +38,16 @@ spec:
           type: string
           description: Organization for the project
           ui:field: HarnessOrgPicker
+        application:
+          title: Application
+          type: string
+          description: Team Lead the owner of this service
+          ui:field: EntityFieldPicker
+          ui:displayField: metadata.name
+          ui:options:
+          catalogFilter:
+              kind: 
+              - Component
         token:
           title: Harness Token
           type: string
@@ -55,6 +65,7 @@ spec:
           project: ${{ parameters.name }}
           description: ${{ parameters.description }}
           owner: ${{ parameters.owner }}
+          extra: "${{ parameters.application }}"
         apikey: ${{ parameters.token }}
 
   output:
