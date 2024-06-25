@@ -45,7 +45,7 @@ spec:
           ui:field: EntityFieldPicker
           ui:displayField: metadata.name
           ui:options:
-          catalogFilter:
+            catalogFilter:
               kind: 
               - Component
         token:
