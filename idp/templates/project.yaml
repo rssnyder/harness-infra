@@ -38,6 +38,18 @@ spec:
           type: string
           description: Organization for the project
           ui:field: HarnessOrgPicker
+        application:
+          title: Application
+          type: string
+          description: Team Lead the owner of this service
+          ui:field: EntityFieldPicker
+          ui:displayField: metadata.name
+          ui:options:
+            catalogFilter:
+              kind: 
+              - Component
+              metadata.additionalInfo.foo:
+              - bar
         token:
           title: Harness Token
           type: string
@@ -49,12 +61,13 @@ spec:
       name: Bootstrapping your new project
       action: trigger:harness-custom-pipeline
       input:
-        url: "https://app.harness.io/ng/account/wlgELJ0TTre5aZhzpt8gVA/module/cd/orgs/default/projects/IDP/pipelines/project"
+        url: "https://app.harness.io/ng/account/wlgELJ0TTre5aZhzpt8gVA/module/cd/orgs/default/projects/idp/pipelines/debug"
         inputset:
           organization: ${{ parameters.organization }}
           project: ${{ parameters.name }}
           description: ${{ parameters.description }}
           owner: ${{ parameters.owner }}
+          extra: "${{ parameters.application }}"
         apikey: ${{ parameters.token }}
 
   output:
