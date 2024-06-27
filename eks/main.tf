@@ -169,9 +169,9 @@ resource "harness_platform_connector_kubernetes" "sales_eks" {
   }
 }
 
-resource "harness_platform_connector_kubernetes_cloud_cost" "sales_eks" {
-  identifier = "sales_eks"
-  name       = "sales_eks"
+resource "harness_platform_connector_kubernetes_cloud_cost" "sales_eks_ccm" {
+  identifier = "sales_eks_ccm"
+  name       = "sales_eks_ccm"
 
   features_enabled = ["VISIBILITY", "OPTIMIZATION"]
   connector_ref    = harness_platform_connector_kubernetes.sales_eks.id
